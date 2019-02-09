@@ -1,9 +1,10 @@
 {
   "name": "co2-finder",
   "version": "1.0.0",
-  "description": "",
+  "description": "eh",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/emidah/co2-finder/issues"
   },
-  "homepage": "https://github.com/emidah/co2-finder#readme"
+  "homepage": "https://github.com/emidah/co2-finder#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
