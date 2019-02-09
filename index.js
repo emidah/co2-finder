@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const app = express();
 
-request('http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv').pipe(fs.createWriteStream('pop.csv'));
+//request('http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv').pipe(fs.createWriteStream('pop.csv'));
 
 // Create db connection
 
