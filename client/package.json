@@ -4,9 +4,10 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
+    "create-react-app": "^2.1.3",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "react-scripts": "2.1.3"
+    "react-scripts": "^2.1.3"
   },
   "scripts": {
     "start": "react-scripts start",

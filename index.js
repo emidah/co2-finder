@@ -11,12 +11,19 @@ const app = express();
 
 const { Client } = require('pg');
 
-const client = new Client({
+let client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
 });
 
-/*
+// Detect local database environment, disable SSL
+if(process.env.DATABASE_URL == ("postgresql:///" + process.env.USER) ) {
+  client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: false,
+  });
+}
+
 client.connect();
 
 client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
@@ -26,7 +33,7 @@ client.query('SELECT table_schema,table_name FROM information_schema.tables;', (
   }
   client.end();
 });
-*/
+
 
 // Serve static website at client/build/...
 app.use( express.static(path.join(__dirname, 'client/build') ));
