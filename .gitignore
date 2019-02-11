@@ -81,4 +81,5 @@ typings/
 .dynamodb/
 
 pop.zip
+*.csv
 
