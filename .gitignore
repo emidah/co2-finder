@@ -82,4 +82,4 @@ typings/
 
 pop.zip
 *.csv
-
+.DS_Store

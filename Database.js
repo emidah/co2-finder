@@ -1,111 +1,129 @@
 const request = require('request-promise-native');
 const fs = require('fs');
-const { Client } = require('pg');
-const yauzl = require("yauzl");
-
+const AdmZip = require("adm-zip");
+const csv = require('csvtojson')
+ 
 module.exports = class Database {
+    constructor () {
 
-    constructor() {
-        let dlSuccess = true
+    }
+
+    async initialize() {
+
+        const popZipPath = "pop.zip"
+        const co2ZipPath = "co2.zip"
+        const popBackupPath = "pop_backup.csv"
+        const co2BackupPath = "co2_backup.csv"
+        const tempPopPath = "pop.zip"
+        const tempCo2Path = "co2.zip"
+        let popPath = "pop.zip"
+        let co2Path = "co2.zip"
 
         const popOptions = {
-            url: 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
+            url: 'localhost',//''http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
             encoding: null
           };
+
+        const co2Options = {
+            url: 'localhost',//'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
+            encoding: null
+          };
+
+        // Download co2 zip data from world bank API
+        const co2request = request(co2Options)
+        .then(function (res) {
+            fs.writeFileSync(co2ZipPath, res);
+            unZip(co2ZipPath,tempCo2Path)
+            trimLines(co2Path);
+        })
+        .catch(function (err){
+            co2Path = co2BackupPath
+            console.log("fetching co2 data failed, using backup")
+        });   
 
         // Download population zip data from world bank API
         const poprequest = request(popOptions)
-        .catch(function(err) {
-            console.log("worldbank api call for pop failed")
-            dlSuccess = false;
-            zipOut('pop_backup.zip', 'pop.csv')
-          })
         .then(function (res) {
-            fs.writeFileSync('pop.zip', res);
-          });
-
-        // Download co2 zip data from world bank API
-        //request('http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv')
-
-        const co2Options = {
-            url: 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
-            encoding: null
-          };
-
-        const co2request = request(co2Options)
-        .catch( function(err) {
-            console.log("worldbank api call for co2 failed")
-            dlSuccess = false;
-            zipOut('co2_backup.zip', 'co2.csv')
-          })
-        .then(function (res) {
-            fs.writeFileSync('pop.zip', res);
-          });
-
+            fs.writeFileSync(popZipPath, res);
+            unZip(popZipPath,tempPopPath);
+            trimLines(popPath);
+        })
+        .catch(function (err){
+            popPath = popBackupPath
+            console.log("fetching pop data failed, using backup")
+        });
         
-        // Create db connection
-        this.client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        ssl: true,
-        });
+        await poprequest
+        await co2request
 
-        // Detect local database environment, disable SSL
-        // Expecting local database at postgresql:///<username> with no SSL/authentication
-        if(process.env.DATABASE_URL == ("postgresql:///" + process.env.USER) ) {
-        this.client = new Client({
-            connectionString: process.env.DATABASE_URL,
-            ssl: false,
-        });
-        }
+        //Convert csvs to json objects
 
-        this.attemptInit()
+        let pop_data = new Object()
+        const popObj = csv()
+        .fromFile(popPath)
+        .then((jsonObj)=>{
+            pop_data = jsonObj
+        })
+        
+        let co2_data = new Object()
+        const co2Obj = csv()
+        .fromFile(co2Path)
+        .then((jsonObj)=>{
+            co2_data = jsonObj
+        })
+
+        await co2Obj
+        await popObj
+
+        //Json objecs are Arrays, we want hashmaps.
+        this.pop_data = new Map(pop_data.map(i => [i['Country Code'], i]));
+        this.co2_data = new Map(co2_data.map(i => [i['Country Code'], i]));
+        
+
+        //console.log(this.co2_data)
+        
     }
 
-    attemptInit() {
-        this.client.connect();
-
-        this.client.query('CREATE TABLE IF NOT EXISTS countries ()', (err, res) => {
-            if (err) {
-                console.log("There was an error in creating the initial table. Note that if this fails, you're not connecting to the database correctly")
-                console.log(err)
-                throw err;
-            }
-
-            console.log(res)
-            this.client.end();
+    async setUp() {
+        await this.initialize().catch(function (err) {
+            throw err;
         });
+
+        //console.log("yes")
+
     }
+
 }
 
-function zipOut(inputname,outputname) {
+function unZip(inputname,outputname) {
     // Boilerplate stuff copied
-    yauzl.open(inputname, {lazyEntries: true}, function(err, zipfile) {
-        if (err) throw err;
-        zipfile.readEntry();
-        zipfile.on("entry", function(entry) {
-            console.log(entry.fileName)
-
-            if (/\/$/.test(entry.fileName)) {
-            // Directory file names end with '/'.
-            // Note that entires for directories themselves are optional.
-            // An entry's fileName implicitly requires its parent directories to exist.
-            } else {
-                // file entry
-                zipfile.openReadStream(entry, function(err, readStream) {
-                    if (err) throw err;
-                    readStream.on("end", function() {
-                        //Continue overwriting on metadata entries
-                        if (entry.fileName.includes("Metadata")) {
-                            zipfile.readEntry();
-                        }
-                    });
-                    readStream.pipe(fs.createWriteStream(outputname));
-                });
-            }
-        });
+    var zip = new AdmZip(inputname);
+    var zipEntries = zip.getEntries(); // an array of ZipEntry records
+ 
+    zipEntries.forEach(function(zipEntry) {
+        if (!zipEntry.entryName.includes("Metadata")) {
+            zip.extractEntryTo(zipEntry, outputname);
+        }
     });
 
 }
 
+function trimLines(filename){
+    console.log("test")
+    const file = fs.readFileSync(filename, 'utf8');
+    console.log("test")
+    
+    let lines = file.split("\n")
+    let splitAt = 0
+    for (let i = 0; i < lines.length; i++){
+        if(lines[i].includes("Country")){
+            splitAt = i
+            break;
+        }
+    }
+    let out = lines.slice(splitAt).join('\n');
+    fs.writeFileSync(filename, out);
+
+}
 
 
