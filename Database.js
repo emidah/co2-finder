@@ -5,8 +5,11 @@ const csv = require('csvtojson')
  
 module.exports = class Database {
     constructor () {
-
     }
+
+    // Initialize a "database" in memory by pulling zips from the world bank api.
+    // A relational database (such as Heroku's integrated Postgres) would make more sense, 
+    // but it's also more complicated...
 
     async initialize() {
 
@@ -25,12 +28,12 @@ module.exports = class Database {
 
         // Set up downloads
         const popOptions = {
-            url: 'localhost', //'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
+            url: 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
             encoding: null
           };
 
         const co2Options = {
-            url: 'localhost', //'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
+            url: 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
             encoding: null
           };
 
@@ -83,8 +86,8 @@ module.exports = class Database {
         await popObj
 
         //Json objecs are Arrays, we want hashmaps.
-        this.pop_data = new Map(pop_data.map(i => [i['Country Name'], i]));
-        this.co2_data = new Map(co2_data.map(i => [i['Country Name'], i]));
+        this.pop_data = new Map(pop_data.map(i => [i['Country Code'], i]));
+        this.co2_data = new Map(co2_data.map(i => [i['Country Code'], i]));
         
     }
 
@@ -116,6 +119,7 @@ function unZip(inputname,outputname) {
 
 }
 
+// Removes the first few lines of useless CSV data
 function trimLines(filename){
     const file = fs.readFileSync(filename, 'utf8');
     
@@ -129,7 +133,6 @@ function trimLines(filename){
     }
     let out = lines.slice(splitAt).join('\n');
     fs.writeFileSync(filename, out);
-
 }
 
 
