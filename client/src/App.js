@@ -1,19 +1,46 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Select from 'react-select';
+import axios from 'axios';
+
+
+const Loading = () => (<h2>Loading...</h2>);
+
+const Errored = () => (<h2>There was a problem fetching data from the database</h2>);
+
+const Loaded = () => (<h2>Loaded</h2>)
+
+let countries = []
 
 class App extends Component {
+  constructor(props){
+    super(props)
+
+    this.app = <Loading/>
+
+    this.state = {status: "loading"}
+
+    const self = this
+
+    axios.get('/api/co2/countries')
+    .then(function (response) {
+        self.app = <Loaded/>;
+        countries = JSON.parse(response)
+    })
+    .catch(function (error) {
+       self.app = <Errored/>
+    })
+    .then(function () {
+      self.setState({status: "loaded"});
+    });
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1>
-            Placeholder
-          </h1>
-          <p>holding many places here</p>
-        </header>
-      </div>
-    );
+    return this.app;
+  }
+
+  async loadCountries(){
   }
 }
 
