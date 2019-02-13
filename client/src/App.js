@@ -11,13 +11,12 @@ const Errored = () => (<h2>There was a problem fetching data from the database</
 
 const Loaded = () => (<h2>Loaded</h2>)
 
-let countries = []
-
 class App extends Component {
   constructor(props){
     super(props)
 
     this.app = <Loading/>
+    this.countries = []
 
     this.state = {status: "loading"}
 
@@ -26,7 +25,7 @@ class App extends Component {
     axios.get('/api/co2/countries')
     .then(function (response) {
         self.app = <Loaded/>;
-        countries = response.data
+        self.countries = response.data
     })
     .catch(function (error) {
        self.app = <Errored/>
@@ -41,8 +40,6 @@ class App extends Component {
     return this.app;
   }
 
-  async loadCountries(){
-  }
 }
 
 export default App;
