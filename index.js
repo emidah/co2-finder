@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const db = new Database();
-const setup = db.setUp().then(() => {
+const setup = db.initialize().then(() => {
     runApp()
 })
 
@@ -12,7 +12,7 @@ function runApp() {
     app.use( express.static(path.join(__dirname, 'client/build') ));
 
     app.get( '/api/countries', (req, res) => {
-        const countrynames =  (Array.from( db.co2_data.values() )).map(a => a["Country Name"]);
+        const countrynames =  Array.from( db.co2_data.keys() )
         res.json(countrynames)
     });
 

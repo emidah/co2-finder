@@ -80,6 +80,6 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-pop.zip
-*.csv
+downloads/
+data/
 .DS_Store

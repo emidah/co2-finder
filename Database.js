@@ -10,53 +10,60 @@ module.exports = class Database {
 
     async initialize() {
 
-        const popZipPath = "pop.zip"
-        const co2ZipPath = "co2.zip"
-        const popBackupPath = "pop_backup.csv"
-        const co2BackupPath = "co2_backup.csv"
-        const tempPopPath = "pop.zip"
-        const tempCo2Path = "co2.zip"
-        let popPath = "pop.zip"
-        let co2Path = "co2.zip"
+        // Paths for downloaded zip files
+        const popZipPath = "./downloads/pop.zip"
+        const co2ZipPath = "./downloads/co2.zip"
 
+        // Paths for backup zip files in case the api was down
+        const popBackupPath = "./backups/pop_backup.csv"
+        const co2BackupPath = "./backups/co2_backup.csv"
+
+        // The actual paths the data is pulled from
+        let popPath = "./data/pop.csv"
+        let co2Path = "./data/co2.csv"
+
+
+        // Set up downloads
         const popOptions = {
-            url: 'localhost',//''http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
+            url: 'localhost', //'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
             encoding: null
           };
 
         const co2Options = {
-            url: 'localhost',//'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
+            url: 'localhost', //'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
             encoding: null
           };
 
-        // Download co2 zip data from world bank API
+        // Download co2 zip data from world bank API, write it to a file, unzip it and remove the csv metadata lines
         const co2request = request(co2Options)
         .then(function (res) {
             fs.writeFileSync(co2ZipPath, res);
-            unZip(co2ZipPath,tempCo2Path)
+            unZip(co2ZipPath,co2Path)
             trimLines(co2Path);
         })
         .catch(function (err){
             co2Path = co2BackupPath
-            console.log("fetching co2 data failed, using backup")
+            trimLines(co2Path);
+            console.log(err)
         });   
 
-        // Download population zip data from world bank API
+        // Download population zip data from world bank API, write it to a file, unzip it and remove the csv metadata lines
         const poprequest = request(popOptions)
         .then(function (res) {
             fs.writeFileSync(popZipPath, res);
-            unZip(popZipPath,tempPopPath);
+            unZip(popZipPath,popPath);
             trimLines(popPath);
         })
         .catch(function (err){
             popPath = popBackupPath
-            console.log("fetching pop data failed, using backup")
+            trimLines(popPath);
+            console.log(err)
         });
         
         await poprequest
         await co2request
-
-        //Convert csvs to json objects
+        
+        // Convert our new csvs to json objects
 
         let pop_data = new Object()
         const popObj = csv()
@@ -76,42 +83,41 @@ module.exports = class Database {
         await popObj
 
         //Json objecs are Arrays, we want hashmaps.
-        this.pop_data = new Map(pop_data.map(i => [i['Country Code'], i]));
-        this.co2_data = new Map(co2_data.map(i => [i['Country Code'], i]));
+        this.pop_data = new Map(pop_data.map(i => [i['Country Name'], i]));
+        this.co2_data = new Map(co2_data.map(i => [i['Country Name'], i]));
         
-
-        //console.log(this.co2_data)
-        
-    }
-
-    async setUp() {
-        await this.initialize().catch(function (err) {
-            throw err;
-        });
-
-        //console.log("yes")
-
     }
 
 }
 
+// Unzips files with input and output paths...
 function unZip(inputname,outputname) {
+
     // Boilerplate stuff copied
+
+    let filename = "";
     var zip = new AdmZip(inputname);
     var zipEntries = zip.getEntries(); // an array of ZipEntry records
  
     zipEntries.forEach(function(zipEntry) {
         if (!zipEntry.entryName.includes("Metadata")) {
-            zip.extractEntryTo(zipEntry, outputname);
+            zip.extractEntryTo(zipEntry, '.',false, true);
+            filename = zipEntry.name;
         }
     });
+    
+    try {
+        fs.mkdirSync('data')
+    } catch (err) {
+
+    }
+
+    fs.renameSync(filename, outputname);
 
 }
 
 function trimLines(filename){
-    console.log("test")
     const file = fs.readFileSync(filename, 'utf8');
-    console.log("test")
     
     let lines = file.split("\n")
     let splitAt = 0
