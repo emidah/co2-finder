@@ -1,31 +1,67 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Select from 'react-select';
 import axios from 'axios';
+import Dropdown from './Dropdown'
 
 
 const Loading = () => (<h2>Loading...</h2>);
 
-const Errored = () => (<h2>There was a problem fetching data from the database</h2>);
+const Errored = () => (<h2>There was a problem fetching data from the database</h2>)
 
-const Loaded = () => (<h2>Loaded</h2>)
+const Loaded = (props) => {
+  // Set "world" as default
+  let defVal = props.options.find(item => {
+    return item.value === "WLD"
+  });
+
+  const onChange = (values) => {
+    console.log(values)
+    if (values.length > 4){
+      props.app.setState({
+        full: true
+      });
+    
+    } else {
+      props.app.setState({
+        full: false,
+        selected: values
+      });
+    }
+  }
+
+  console.log("load")
+
+  return (
+  <Dropdown name="countries" 
+  options={props.options}
+  defaultValue={defVal} 
+  onChange={onChange} />)
+}
 
 class App extends Component {
+
   constructor(props){
     super(props)
-
-    this.app = <Loading/>
-    this.countries = []
-
-    this.state = {status: "loading"}
-
     const self = this
+    
+    this.app = <Loading/>
+
+    this.state = {
+      status: "loading",
+      selected: [],
+      full: false
+    }
+
 
     axios.get('/api/co2/countries')
     .then(function (response) {
-        self.app = <Loaded/>;
-        self.countries = response.data
+        self.countryList = response.data
+        self.countryLookup = new Map(response.data.value, response.data.label)
+        self.app = (
+        <Loaded options={self.countryList} app={self}
+       />
+        );
     })
     .catch(function (error) {
        self.app = <Errored/>
@@ -36,7 +72,10 @@ class App extends Component {
     });
   }
 
+  
+  
   render() {
+    console.log(this.state)
     return this.app;
   }
 
