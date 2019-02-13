@@ -28,12 +28,12 @@ module.exports = class Database {
 
         // Set up downloads
         const popOptions = {
-            url: 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
+            url: 'localhost',//'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
             encoding: null
           };
 
         const co2Options = {
-            url: 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
+            url: 'localhost', //http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
             encoding: null
           };
 

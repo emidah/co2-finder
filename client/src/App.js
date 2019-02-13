@@ -26,10 +26,11 @@ class App extends Component {
     axios.get('/api/co2/countries')
     .then(function (response) {
         self.app = <Loaded/>;
-        countries = JSON.parse(response)
+        countries = response.data
     })
     .catch(function (error) {
        self.app = <Errored/>
+       console.log(error)
     })
     .then(function () {
       self.setState({status: "loaded"});

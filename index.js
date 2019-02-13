@@ -20,31 +20,38 @@ function runApp() {
 
     // --- API ---
 
-    // Return all available country codes for co2 query
-    app.get( '/api/co2/countries', (req, res) => {
-        const countrynames =  Array.from( db.co2_data.keys() )
-        res.json(countrynames)
-    });
+    // Return all available countries for queries of type co2 and pop
+    app.get( '/api/:data/countries', (req, res) => {
+        let dataSource = []
 
-    // Return all available country codes for population query
-    app.get( '/api/pop/countries', (req, res) => {
-        const countrynames =  Array.from( db.pop_data.keys() )
-        res.json(countrynames)
-    });
-
-    // Return country co2 data
-    app.get( '/api/co2/:country', (req,res) => {    
-        if( Array.from(db.co2_data.keys()).includes(req.params.country)) {
-            res.json(db.co2_data.get(req.params.country))
-        } else {
-            res.status(404).json("Country not found")
+        if (req.params.data === "co2"){
+            dataSource = db.co2_data
+        } else if (req.params.data === "pop"){
+            dataSource = db.pop_data
         }
-    } );
 
-    // Return country population data
-    app.get( '/api/pop/:country', (req,res) => {    
-        if( Array.from(db.pop_data.keys()).includes(req.params.country)) {
-            res.json(db.pop_data.get(req.params.country))
+        const responseData =  Array.from( dataSource.keys() ).map(x => {
+            const obj = new Object();
+            obj.name = dataSource.get(x)["Country Name"]
+            obj.code = dataSource.get(x)["Country Code"]
+            return obj
+        })
+
+        res.json(responseData)
+    });
+
+    // Return specific country co2 data
+    app.get( '/api/:data/:country', (req,res) => {    
+        let dataSource = []
+
+        if (req.params.data === "co2"){
+            dataSource = db.co2_data
+        } else if (req.params.data === "pop"){
+            dataSource = db.pop_data
+        }
+
+        if( Array.from(dataSource.keys()).includes(req.params.country)) {
+            res.json(dataSource.get(req.params.country))
         } else {
             res.status(404).json("Country not found")
         }
