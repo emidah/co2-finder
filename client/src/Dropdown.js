@@ -30,11 +30,9 @@ class Dropdown extends Component{
                 this.setState({
                     full: true
                 });
-            }
-            
+            }   
             if (typeof this.props.onChange === 'function') this.props.onChange(values)
         }
-
         
 
     }

@@ -17,12 +17,14 @@ const Options = (props) => (
 const Loaded = (props) => (
   <div className="App">
     <h1>CO2 data by country</h1>
-    <Dropdown 
-      options={props.options} 
-      maxValues={4} 
-      onChange={props.onChange}
-      isDisabled={!props.dataLoaded}
-      defaultValue={props.defaultValue}/>
+    <div className='Dropdown'>
+      <Dropdown 
+        options={props.options} 
+        maxValues={5} 
+        onChange={props.onChange}
+        isDisabled={!props.dataLoaded}
+        defaultValue={props.defaultValue}/>
+      </div>
     <div className="Chart">
       <Chart labels={props.labels} 
       datasets={props.chartData}/>
@@ -50,8 +52,12 @@ class App extends Component {
     axios.get('/api/co2/countries')
     .then(function (response) {
         self.countryList = response.data
-        self.countryLookup = new Map(response.data.value, response.data.label)
-        self.defaultValue = [self.countryList.find(obj => obj.value === "WLD")]
+        self.countryList.sort( (a,b) => {return a.label.localeCompare(b.label)})
+        self.countryLookup = new Map( response.data.map( 
+          obj => [obj.value, {value: obj.value, label: obj.label}]
+          ));
+        console.log(self.countryLookup)
+        self.defaultValue = [self.countryLookup.get("USA"), self.countryLookup.get("CHN")]
         self.onSelectionChanged(self.defaultValue)
         self.setState({status: "loaded"});
         
@@ -88,7 +94,7 @@ class App extends Component {
     );
     await Promise.all(promises)
 
-    this.data.sort( (a,b) => { a['Country Name'].localeCompare(b['Country Name'])})
+    this.data.sort( (a,b) => {return a['Country Name'].localeCompare(b['Country Name'])})
 
     this.chartData = []
     
