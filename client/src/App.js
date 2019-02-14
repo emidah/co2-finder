@@ -17,7 +17,14 @@ const Loaded = (props) => (
     <div className="Chart">
       <Chart />
     </div>
+    <div className="Options">
+      <Options/>
+    </div>
   </div>
+)
+
+const Options = (props) => (
+  <p>Test</p>
 )
 
 class App extends Component {
