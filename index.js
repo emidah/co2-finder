@@ -32,8 +32,8 @@ function runApp() {
 
         const responseData =  Array.from( dataSource.keys() ).map(x => {
             const obj = new Object();
-            obj.name = dataSource.get(x)["Country Name"]
-            obj.code = dataSource.get(x)["Country Code"]
+            obj.value = dataSource.get(x)["Country Code"]
+            obj.label = dataSource.get(x)["Country Name"]
             return obj
         })
 
