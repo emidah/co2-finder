@@ -6,7 +6,7 @@ const colorize = (dataset) => {
     let colors = colorPool.slice()
     for(let entry of dataset){
         if(colors.length === 0) colors = colorPool.slice()
-        console.log(colors)
+        //console.log(colors)
         entry.borderColor = colors.pop()
     }
 }
@@ -28,16 +28,23 @@ class Chart extends Component {
                 
             }}
             options={{
+                maintainAspectRatio: false,
                 legend: {
                     // Make sure data can't be hidden
                     onClick: function(event, legendItem) {}
                 },
                 scales: {
                     yAxes: [{
-                      scaleLabel: {
-                        display: true,
-                        labelString: 'CO2 emissions (megatons)'
-                      }
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'CO2 emissions (kt)'
+                        },
+                        ticks: {
+                            beginAtZero:true,
+                            userCallback: function(value, index, values) {
+                                return value.toLocaleString('en-US');
+                            }
+                        }
                     }],
                     xAxes: [{
                         scaleLabel: {

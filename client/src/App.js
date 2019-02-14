@@ -11,7 +11,13 @@ const Loading = () => (<h2>Loading...</h2>);
 const Errored = () => (<h2>There was a problem fetching data from the database</h2>)
 
 const Options = (props) => (
-  <p>Test</p>
+  <div>
+    <label>
+    <input type="checkbox" onChange={props.perCapitaChanged}/>
+      Per capita
+      
+    </label>
+  </div>
 )
 
 const Loaded = (props) => (
@@ -30,7 +36,7 @@ const Loaded = (props) => (
       datasets={props.chartData}/>
     </div>
     <div className="Options">
-      <Options/>
+      <Options perCapitaChanged={props.perCapitaChanged} />
     </div>
   </div>
 )
@@ -41,12 +47,14 @@ class App extends Component {
     super(props)
     const self = this
     this.chartData = []
+    this.chartDataPerCapita = []
     this.labels = []
 
     this.state = {
       status: "loading",
       selected: [],
-      dataLoaded: true
+      dataLoaded: true,
+      perCapita: false
     }
 
     axios.get('/api/co2/countries')
@@ -56,9 +64,11 @@ class App extends Component {
         self.countryLookup = new Map( response.data.map( 
           obj => [obj.value, {value: obj.value, label: obj.label}]
           ));
-        console.log(self.countryLookup)
+        
+        // Set selection default values as USA and China
         self.defaultValue = [self.countryLookup.get("USA"), self.countryLookup.get("CHN")]
         self.onSelectionChanged(self.defaultValue)
+        
         self.setState({status: "loaded"});
         
     })
@@ -76,51 +86,64 @@ class App extends Component {
       dataLoaded: false
     });
 
-    this.asyncFetcher(values)
+    this.dataFetcher(values)
   }
 
-  async asyncFetcher(values){
-    this.data = []
+  async dataFetcher(values){
+    let co2data = []
+    let popdata = []
     const self = this
 
-    const promises = values.map(val => (
-      axios.get('/api/co2/'+ val.value))
-      .then(function(res) {
-        self.data.push(res.data)
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
-    );
-    await Promise.all(promises)
+    const co2pull = this.pullToData('/api/co2/', values, co2data)
+    const poppull = this.pullToData('/api/pop/', values, popdata)
 
-    //this.data.sort( (a,b) => {return a['Country Name'].localeCompare(b['Country Name'])})
+    await co2pull
+    await poppull
 
     this.chartData = []
+    this.chartDataPerCapita = []
     
+    // Chart needs labels. Only years where both datas are found are valid.
     this.labels = []
-    if(this.data.length > 0){
+    if(co2data.length > 0){
       for(let i = 1960; i<2100; i++){
-        if (typeof this.data[0][i] === 'undefined') break;
+        if (typeof co2data[0][i] === 'undefined' || typeof popdata[0][i] === 'undefined') break;
         this.labels.push(String(i))
       }
     }
 
-    for(let entry of this.data){
+    for(let entry of co2data){
       const data = []
-      for(let i = 1960; i<2100; i++){
-        if (typeof entry[i] === 'undefined') break;
-        if (entry[i] === "") entry[i] = undefined
-        data.push(entry[String(i)]/1000)
-      }
+      const perCapData = []
 
+      const pop = popdata.find(x => x["Country Code"] === entry["Country Code"])
+
+      for(let i = 1960; i<2100; i++){
+        if (typeof entry[i] === 'undefined' || typeof pop[i] === 'undefined') break;
+        if (entry[i] === "" || pop[i] === ""){ 
+          data.push(undefined)
+          perCapData.push(undefined)
+        } else {
+          data.push(entry[i])
+          const perc = parseFloat(entry[i]) / parseFloat(pop[i])
+          perCapData.push(perc)
+        }
+      }
+      
       this.chartData.push(
         {
           label: entry["Country Name"],
           backgroundColor: 'rgba(0, 0, 0, 0)',
           data: data,
-      }
-      );
+        });
+
+      this.chartDataPerCapita.push(
+        {
+          label: entry["Country Name"] + " (per capita)",
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+          data: perCapData,
+        });
+    
     }
 
     this.setState({
@@ -128,20 +151,43 @@ class App extends Component {
       dataLoaded: true
     });
   }
+
+  async pullToData(address, values, dest, labelDest){
+    const promises = values.map(val => (
+      axios.get(address + val.value))
+      .then(function(res) {
+        dest.push(res.data)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    );
+    await Promise.all(promises)
+  }
+
+  perCapitaChanged(event){
+    this.setState({
+      perCapita: event.target.checked,
+    });
   
+  }
 
   render() {
     let app = (<Loading/>);
     if(this.state.status === "loaded"){
+      const chartData = this.state.perCapita ? this.chartDataPerCapita: this.chartData
+
       app = (
       <Loaded 
         options={this.countryList} 
         onChange={this.onSelectionChanged.bind(this)} 
-        chartData={this.chartData}
+        chartData={chartData}
         dataLoaded={this.state.dataLoaded}
         labels={this.labels}
-        defaultValue={this.defaultValue}/>
+        defaultValue={this.defaultValue}
+        perCapitaChanged={this.perCapitaChanged.bind(this)}/>
         );
+
     } else if (this.state.status === "errored"){
       app = (<Errored/>)
     }

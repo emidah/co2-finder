@@ -24,6 +24,8 @@
   border-radius: 5px;
   padding: 5px 10px 10px 5px;
   background-color: #ffffff;
+  height: 60vh;
+  max-height: 300px;
 }
 
 .Options{
@@ -33,6 +35,8 @@
   background-color: #ffffff;
   text-align: left;
   padding-left: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .Dropdown {
