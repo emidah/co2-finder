@@ -47,3 +47,11 @@
 h3 {
   font-size: 16pt;
 }
+
+.Footer {
+  font-size: 8pt;
+  color: #929292;
+}
+.Footer a {
+  color:  #424242
+}

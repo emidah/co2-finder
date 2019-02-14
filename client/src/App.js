@@ -6,7 +6,8 @@ import Dropdown from './Dropdown'
 import Chart from './Chart'
 
 
-const Loading = () => (<h2>Loading...</h2>);
+const Loading = () => (
+<h2>Loading...</h2>);
 
 const Errored = () => (<h2>There was a problem fetching data from the database</h2>)
 
@@ -17,6 +18,12 @@ const Options = (props) => (
       <input type="checkbox" onChange={props.perCapitaChanged}/>
       &nbsp;Per capita
     </label>
+  </div>
+)
+
+const Footer = (props) => (
+  <div>
+    <p>This website uses <a href="https://data.worldbank.org/">World Bank</a> <a href="https://data.worldbank.org/indicator/EN.ATM.CO2E.KT">CO2 emissions</a> and <a href="https://data.worldbank.org/indicator/SP.POP.TOTL">population</a> data under the Creative Commons 4.0 license.</p>
   </div>
 )
 
@@ -38,6 +45,9 @@ const Loaded = (props) => (
     <div className="Options">
       <Options perCapitaChanged={props.perCapitaChanged} />
     </div>
+    <div className="Footer">
+      <Footer />
+    </div>
   </div>
 )
 
@@ -48,13 +58,13 @@ class App extends Component {
     const self = this
     this.chartData = []
     this.chartDataPerCapita = []
-    this.labels = []
+    this.chartLabels = []
 
     this.state = {
       status: "loading",
       selected: [],
       dataLoaded: true,
-      perCapita: false
+      perCapita: false,
     }
 
     axios.get('/api/co2/countries')
@@ -103,11 +113,11 @@ class App extends Component {
     this.chartDataPerCapita = []
     
     // Chart needs labels. Only years where both datas are found are valid.
-    this.labels = []
+    this.chartLabels = []
     if(co2data.length > 0){
       for(let i = 1960; i<2100; i++){
         if (typeof co2data[0][i] === 'undefined' || typeof popdata[0][i] === 'undefined') break;
-        this.labels.push(String(i))
+        this.chartLabels.push(String(i))
       }
     }
 
@@ -182,7 +192,7 @@ class App extends Component {
         onChange={this.onSelectionChanged.bind(this)} 
         chartData={chartData}
         dataLoaded={this.state.dataLoaded}
-        labels={this.labels}
+        labels={this.chartLabels}
         defaultValue={this.defaultValue}
         perCapitaChanged={this.perCapitaChanged.bind(this)}/>
         );
