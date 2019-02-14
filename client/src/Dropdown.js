@@ -13,27 +13,36 @@ class Dropdown extends Component{
         }
 
         // Set "world" as default
-        this.defVal = this.state.options.find(item => {
-            return item.value === "WLD"
-        });
+        this.defVal = props.defaultValue
+        this.maxValues = props.maxValues
     }
 
     onChange = (values) => {
-        console.log(values)
-        if (values.length > 4){
-        this.setState({
-            full: true
-        });
+        //console.log(values)
         
+        // Make sure it's impossible to pick more than max
+        if (values.length > (this.maxValues || 99)){
+            this.setState({
+                full: true
+            });
         } else {
-        this.setState({
-            full: false,
-            selected: values
-        });
+            this.setState({
+                selected: values,
+                full: false
+            });
+        }
+
+        if(values.length == this.maxValues){
+            this.setState({
+                full: true
+            });
         }
     }
 
     render(){
+        let options = this.state.options
+        if(this.state.full) options = []
+
         return (
             <Select
             value={this.state.selected}
@@ -41,7 +50,7 @@ class Dropdown extends Component{
             defaultValue={this.defVal}
             isMulti
             name={"countries"}
-            options={this.state.options}
+            options={options}
             className="basic-multi-select"
             classNamePrefix="select"
         />)

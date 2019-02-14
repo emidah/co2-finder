@@ -3,41 +3,22 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import Dropdown from './Dropdown'
+import Chart from './Chart'
 
 
 const Loading = () => (<h2>Loading...</h2>);
 
 const Errored = () => (<h2>There was a problem fetching data from the database</h2>)
 
-const Loaded = (props) => {
-  // Set "world" as default
-  let defVal = props.options.find(item => {
-    return item.value === "WLD"
-  });
-
-  const onChange = (values) => {
-    console.log(values)
-    if (values.length > 4){
-      props.app.setState({
-        full: true
-      });
-    
-    } else {
-      props.app.setState({
-        full: false,
-        selected: values
-      });
-    }
-  }
-
-  console.log("load")
-
-  return (
-  <Dropdown name="countries" 
-  options={props.options}
-  defaultValue={defVal} 
-  onChange={onChange} />)
-}
+const Loaded = (props) => (
+  <div className="App">
+    <h1>CO2 data by country</h1>
+    <Dropdown options={props.options} maxValues={4}/>
+    <div className="Chart">
+      <Chart />
+    </div>
+  </div>
+)
 
 class App extends Component {
 
