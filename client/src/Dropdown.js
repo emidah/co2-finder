@@ -7,21 +7,16 @@ class Dropdown extends Component{
         super(props)
 
         this.state = {
-            options: props.options,
-            selected: "",
-            full: false
+            selected: props.defaultValue,
+            full: false,
         }
-
-        // Set "world" as default
-        this.defVal = props.defaultValue
-        this.maxValues = props.maxValues
     }
 
     onChange = (values) => {
         //console.log(values)
         
         // Make sure it's impossible to pick more than max
-        if (values.length > (this.maxValues || 99)){
+        if (values.length > (this.props.maxValues || 99)){
             this.setState({
                 full: true
             });
@@ -30,35 +25,35 @@ class Dropdown extends Component{
                 selected: values,
                 full: false
             });
+            
+            if (typeof this.props.onChange === 'function') this.props.onChange(values)
         }
 
-        if(values.length == this.maxValues){
+        if(values.length === this.maxValues){
             this.setState({
                 full: true
             });
         }
+
     }
 
     render(){
-        let options = this.state.options
+        let options = this.props.options
         if(this.state.full) options = []
-
         return (
             <Select
             value={this.state.selected}
             onChange = {this.onChange.bind(this)}
-            defaultValue={this.defVal}
+            defaultValue={this.props.defaultValue}
             isMulti
             name={"countries"}
             options={options}
             className="basic-multi-select"
             classNamePrefix="select"
+            isDisabled={this.props.isDisabled}
         />)
     }
 
 }
-
-
-
 
 export default Dropdown 

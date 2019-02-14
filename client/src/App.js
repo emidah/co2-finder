@@ -10,12 +10,22 @@ const Loading = () => (<h2>Loading...</h2>);
 
 const Errored = () => (<h2>There was a problem fetching data from the database</h2>)
 
+const Options = (props) => (
+  <p>Test</p>
+)
+
 const Loaded = (props) => (
   <div className="App">
     <h1>CO2 data by country</h1>
-    <Dropdown options={props.options} maxValues={4}/>
+    <Dropdown 
+      options={props.options} 
+      maxValues={4} 
+      onChange={props.onChange}
+      isDisabled={!props.dataLoaded}
+      defaultValue={props.defaultValue}/>
     <div className="Chart">
-      <Chart />
+      <Chart labels={props.labels} 
+      datasets={props.chartData}/>
     </div>
     <div className="Options">
       <Options/>
@@ -23,48 +33,113 @@ const Loaded = (props) => (
   </div>
 )
 
-const Options = (props) => (
-  <p>Test</p>
-)
-
 class App extends Component {
 
   constructor(props){
     super(props)
     const self = this
-    
-    this.app = <Loading/>
+    this.chartData = []
+    this.labels = []
 
     this.state = {
       status: "loading",
       selected: [],
-      full: false
+      dataLoaded: true
     }
-
 
     axios.get('/api/co2/countries')
     .then(function (response) {
         self.countryList = response.data
         self.countryLookup = new Map(response.data.value, response.data.label)
-        self.app = (
-        <Loaded options={self.countryList} app={self}
-       />
-        );
+        self.defaultValue = [self.countryList.find(obj => obj.value === "WLD")]
+        self.onSelectionChanged(self.defaultValue)
+        self.setState({status: "loaded"});
+        
     })
     .catch(function (error) {
-       self.app = <Errored/>
+      self.setState({status: "errored"});
        console.log(error)
     })
     .then(function () {
-      self.setState({status: "loaded"});
     });
   }
 
+  onSelectionChanged(values){
+    this.setState({
+      selected: values,
+      dataLoaded: false
+    });
+
+    this.asyncFetcher(values)
+  }
+
+  async asyncFetcher(values){
+    this.data = []
+    const self = this
+
+    const promises = values.map(val => (
+      axios.get('/api/co2/'+ val.value))
+      .then(function(res) {
+        self.data.push(res.data)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    );
+    await Promise.all(promises)
+
+    this.data.sort( (a,b) => { a['Country Name'].localeCompare(b['Country Name'])})
+
+    this.chartData = []
+    
+    this.labels = []
+    if(this.data.length > 0){
+      for(let i = 1960; i<2100; i++){
+        if (typeof this.data[0][i] === 'undefined') break;
+        this.labels.push(String(i))
+      }
+    }
+
+    for(let entry of this.data){
+      const data = []
+      for(let i = 1960; i<2100; i++){
+        if (typeof entry[i] === 'undefined') break;
+        if (entry[i] === "") entry[i] = undefined
+        data.push(entry[String(i)])
+      }
+
+      this.chartData.push(
+        {
+          label: entry["Country Name"],
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+          data: data,
+      }
+      );
+    }
+
+    this.setState({
+      selected: values,
+      dataLoaded: true
+    });
+  }
   
-  
+
   render() {
-    console.log(this.state)
-    return this.app;
+    let app = (<Loading/>);
+    if(this.state.status === "loaded"){
+      app = (
+      <Loaded 
+        options={this.countryList} 
+        onChange={this.onSelectionChanged.bind(this)} 
+        chartData={this.chartData}
+        dataLoaded={this.state.dataLoaded}
+        labels={this.labels}
+        defaultValue={this.defaultValue}/>
+        );
+    } else if (this.state.status === "errored"){
+      app = (<Errored/>)
+    }
+    return app;
   }
 
 }
