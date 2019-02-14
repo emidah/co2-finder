@@ -25,15 +25,17 @@ class Dropdown extends Component{
                 selected: values,
                 full: false
             });
+
+            if(values.length === this.props.maxValues){
+                this.setState({
+                    full: true
+                });
+            }
             
             if (typeof this.props.onChange === 'function') this.props.onChange(values)
         }
 
-        if(values.length === this.maxValues){
-            this.setState({
-                full: true
-            });
-        }
+        
 
     }
 
