@@ -94,7 +94,7 @@ class App extends Component {
     );
     await Promise.all(promises)
 
-    this.data.sort( (a,b) => {return a['Country Name'].localeCompare(b['Country Name'])})
+    //this.data.sort( (a,b) => {return a['Country Name'].localeCompare(b['Country Name'])})
 
     this.chartData = []
     
@@ -111,7 +111,7 @@ class App extends Component {
       for(let i = 1960; i<2100; i++){
         if (typeof entry[i] === 'undefined') break;
         if (entry[i] === "") entry[i] = undefined
-        data.push(entry[String(i)])
+        data.push(entry[String(i)]/1000)
       }
 
       this.chartData.push(

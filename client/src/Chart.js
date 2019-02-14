@@ -31,7 +31,22 @@ class Chart extends Component {
                 legend: {
                     // Make sure data can't be hidden
                     onClick: function(event, legendItem) {}
+                },
+                scales: {
+                    yAxes: [{
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'CO2 emissions (megatons)'
+                      }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                        display: true,
+                        labelString: 'Year'
+                        }
+                    }]
                 }
+                
             }}
              />
         );
