@@ -12,10 +12,10 @@ const Errored = () => (<h2>There was a problem fetching data from the database</
 
 const Options = (props) => (
   <div>
+    <h3>Options</h3>
     <label>
-    <input type="checkbox" onChange={props.perCapitaChanged}/>
-      Per capita
-      
+      <input type="checkbox" onChange={props.perCapitaChanged}/>
+      &nbsp;Per capita
     </label>
   </div>
 )
@@ -92,7 +92,6 @@ class App extends Component {
   async dataFetcher(values){
     let co2data = []
     let popdata = []
-    const self = this
 
     const co2pull = this.pullToData('/api/co2/', values, co2data)
     const poppull = this.pullToData('/api/pop/', values, popdata)
