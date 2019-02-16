@@ -96,15 +96,16 @@ class App extends Component {
 
 
   // Called on selection change, fetches data using class data.js
-  async onSelectionChanged(values){
+  async onSelectionChanged(countries){
 
     this.setState({
-      selectedCountries: values,
+      selectedCountries: countries,
       isDataLoaded: false
     });
 
     try {
-      const charts = await dataFetcher(values)
+      const charts = await dataFetcher(countries)
+
       this.chartData = charts.data
       this.chartDataPerCapita = charts.dataPerCapita
       this.chartLabels = charts.labels

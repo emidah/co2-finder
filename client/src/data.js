@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const getYearLabels = (data1, data2) => {
     const labels = []
+    // Loop until found a field doesn't exist anymore: as of writing, this is "2019"
     if(data1.length > 0 && data2.length > 0){
         for(let i = 1960; i<2100; i++){
           if (typeof data1[0][i] === 'undefined' || typeof data2[0][i] === 'undefined') break;
@@ -33,6 +34,7 @@ const countryFetcher = async (values) => {
   return countryList
 }
 
+// Fetches data and converts it to chartjs-appropriate form
 const dataFetcher = async (values) => {
 
     let co2data = []
