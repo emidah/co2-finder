@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import Dropdown from './Dropdown'
@@ -67,9 +66,12 @@ class App extends Component {
       perCapita: false,
     }
 
+    // Fetch countries
     axios.get('/api/co2/countries')
     .then(function (response) {
         self.countryList = response.data
+        
+        // Sort by name
         self.countryList.sort( (a,b) => {return a.label.localeCompare(b.label)})
         self.countryLookup = new Map( response.data.map( 
           obj => [obj.value, {value: obj.value, label: obj.label}]
@@ -84,13 +86,15 @@ class App extends Component {
     })
     .catch(function (error) {
       self.setState({status: "errored"});
-       console.log(error)
+      console.log(error)
     })
     .then(function () {
     });
   }
 
+  // Called on selection change
   onSelectionChanged(values){
+
     this.setState({
       selected: values,
       dataLoaded: false
@@ -99,9 +103,12 @@ class App extends Component {
     this.dataFetcher(values)
   }
 
+  // Fetches data from API
   async dataFetcher(values){
+
     let co2data = []
     let popdata = []
+
 
     const co2pull = this.pullToData('/api/co2/', values, co2data)
     const poppull = this.pullToData('/api/pop/', values, popdata)

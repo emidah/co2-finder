@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import {Line} from 'react-chartjs-2';
 
+// Adds a bordercolor to each entry in the dataset
 const colorize = (dataset) => {
     const colorPool = ["red", "green", "blue", "yellow", "black", "purple", "grey", "orange"]
     let colors = colorPool.slice()
+
     for(let entry of dataset){
         if(colors.length === 0) colors = colorPool.slice()
         //console.log(colors)
@@ -20,7 +22,9 @@ class Chart extends Component {
             data: [0, 10, 5, 2, 20, 30, 45],
         }];
         const labels = this.props.labels || ["January", "February", "March", "April", "May", "June", "July"]
+
         colorize(datasets)
+        
         return( 
             <Line data= {{ 
                 labels: labels,
