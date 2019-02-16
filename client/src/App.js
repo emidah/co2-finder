@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios';
 import Dropdown from './Dropdown'
 import Chart from './Chart'
+import { dataFetcher, countryFetcher } from './data';
 
-
+// Displayed while the app is loading
 const Loading = () => (
 <h2>Loading...</h2>);
 
+// Displayed if the app encounters an error
 const Errored = () => (<h2>There was a problem fetching data from the database</h2>)
 
 const Options = (props) => (
   <div>
     <h3>Options</h3>
     <label>
-      <input type="checkbox" onChange={props.perCapitaChanged}/>
+      <input type="checkbox" onChange={props.onPerCapitaChanged}/>
       &nbsp;Per capita
     </label>
   </div>
@@ -26,6 +27,7 @@ const Footer = (props) => (
   </div>
 )
 
+// The main displayed page
 const Loaded = (props) => (
   <div className="App">
     <h1>CO2 data by country</h1>
@@ -42,7 +44,7 @@ const Loaded = (props) => (
       datasets={props.chartData}/>
     </div>
     <div className="Options">
-      <Options perCapitaChanged={props.perCapitaChanged} />
+      <Options onPerCapitaChanged={props.onPerCapitaChanged} />
     </div>
     <div className="Footer">
       <Footer />
@@ -54,136 +56,76 @@ class App extends Component {
 
   constructor(props){
     super(props)
-    const self = this
     this.chartData = []
     this.chartDataPerCapita = []
     this.chartLabels = []
 
     this.state = {
       status: "loading",
-      selected: [],
-      dataLoaded: true,
-      perCapita: false,
+      selectedCountries: [],
+      dataLoaded: false,
+      isPerCapitaSelected: false,
     }
 
-    // Fetch countries
-    axios.get('/api/co2/countries')
-    .then(function (response) {
-        self.countryList = response.data
-        
-        // Sort by name
-        self.countryList.sort( (a,b) => {return a.label.localeCompare(b.label)})
-        self.countryLookup = new Map( response.data.map( 
-          obj => [obj.value, {value: obj.value, label: obj.label}]
-          ));
-        
-        // Set selection default values as USA and China
-        self.defaultValue = [self.countryLookup.get("USA"), self.countryLookup.get("CHN")]
-        self.onSelectionChanged(self.defaultValue)
-        
-        self.setState({status: "loaded"});
-        
+    this.loadCountries() 
+  }
+  
+  // Loads initial information about existing countries
+  async loadCountries(){
+    const countryFetch = countryFetcher()
+  
+    countryFetch.catch((err) => {
+      this.setState({status: "errored"});
+      console.log(err)
     })
-    .catch(function (error) {
-      self.setState({status: "errored"});
-      console.log(error)
-    })
-    .then(function () {
-    });
+
+    this.countryList = await countryFetch
+
+    // Used for easier searches of countries (hashmap)
+    this.countryLookup = new Map( this.countryList.map( 
+      obj => [obj.value, {value: obj.value, label: obj.label}]
+      ));
+
+    // Set defaults for the dropdown
+    this.defaultValue = [this.countryLookup.get("USA"), this.countryLookup.get("CHN")]
+    // Set defaults for the chart
+    this.onSelectionChanged(this.defaultValue)
+
+    this.setState({status: "loaded"});
   }
 
-  // Called on selection change
-  onSelectionChanged(values){
+
+  // Called on selection change, fetches data using class data.js
+  async onSelectionChanged(values){
 
     this.setState({
-      selected: values,
-      dataLoaded: false
+      selectedCountries: values,
+      isDataLoaded: false
     });
 
-    this.dataFetcher(values)
-  }
+    try {
+      const charts = await dataFetcher(values)
+      this.chartData = charts.data
+      this.chartDataPerCapita = charts.dataPerCapita
+      this.chartLabels = charts.labels
 
-  // Fetches data from API
-  async dataFetcher(values){
+      this.setState({
+        isDataLoaded: true
+      });
 
-    let co2data = []
-    let popdata = []
-
-
-    const co2pull = this.pullToData('/api/co2/', values, co2data)
-    const poppull = this.pullToData('/api/pop/', values, popdata)
-
-    await co2pull
-    await poppull
-
-    this.chartData = []
-    this.chartDataPerCapita = []
-    
-    // Chart needs labels. Only years where both datas are found are valid.
-    this.chartLabels = []
-    if(co2data.length > 0){
-      for(let i = 1960; i<2100; i++){
-        if (typeof co2data[0][i] === 'undefined' || typeof popdata[0][i] === 'undefined') break;
-        this.chartLabels.push(String(i))
-      }
-    }
-
-    for(let entry of co2data){
-      const data = []
-      const perCapData = []
-
-      const pop = popdata.find(x => x["Country Code"] === entry["Country Code"])
-
-      for(let i = 1960; i<2100; i++){
-        if (typeof entry[i] === 'undefined' || typeof pop[i] === 'undefined') break;
-        if (entry[i] === "" || pop[i] === ""){ 
-          data.push(undefined)
-          perCapData.push(undefined)
-        } else {
-          data.push(entry[i])
-          const perc = parseFloat(entry[i]) / parseFloat(pop[i])
-          perCapData.push(perc)
-        }
-      }
-      
-      this.chartData.push(
-        {
-          label: entry["Country Name"],
-          backgroundColor: 'rgba(0, 0, 0, 0)',
-          data: data,
-        });
-
-      this.chartDataPerCapita.push(
-        {
-          label: entry["Country Name"] + " (per capita)",
-          backgroundColor: 'rgba(0, 0, 0, 0)',
-          data: perCapData,
-        });
-    
-    }
-
-    this.setState({
-      selected: values,
-      dataLoaded: true
-    });
-  }
-
-  async pullToData(address, values, dest, labelDest){
-    const promises = values.map(val => (
-      axios.get(address + val.value))
-      .then(function(res) {
-        dest.push(res.data)
+    } catch (err) {
+      this.setState({
+        status: "errored"
       })
-      .catch(function (error) {
-        console.log(error)
-      })
-    );
-    await Promise.all(promises)
+      console.log(err)
+    }
+    
   }
+  
 
-  perCapitaChanged(event){
+  onPerCapitaChanged(event){
     this.setState({
-      perCapita: event.target.checked,
+      isPerCapitaSelected: event.target.checked,
     });
   
   }
@@ -191,17 +133,17 @@ class App extends Component {
   render() {
     let app = (<Loading/>);
     if(this.state.status === "loaded"){
-      const chartData = this.state.perCapita ? this.chartDataPerCapita: this.chartData
+      const chartData = this.state.isPerCapitaSelected ? this.chartDataPerCapita: this.chartData
 
       app = (
       <Loaded 
         options={this.countryList} 
         onChange={this.onSelectionChanged.bind(this)} 
         chartData={chartData}
-        dataLoaded={this.state.dataLoaded}
+        dataLoaded={this.state.isDataLoaded}
         labels={this.chartLabels}
         defaultValue={this.defaultValue}
-        perCapitaChanged={this.perCapitaChanged.bind(this)}/>
+        onPerCapitaChanged={this.onPerCapitaChanged.bind(this)}/>
         );
 
     } else if (this.state.status === "errored"){
