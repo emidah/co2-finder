@@ -1,5 +1,10 @@
 import axios from 'axios';
 
+/**
+ * Gets year labels by checking the years that exist in both datasets.
+ * @param {} data1 
+ * @param {} data2 
+ */
 const getYearLabels = (data1, data2) => {
     const labels = []
     // Loop until found a field doesn't exist anymore: as of writing, this is "2019"
@@ -12,6 +17,12 @@ const getYearLabels = (data1, data2) => {
     return labels
 }
 
+/**
+ * Fetches data from the set address based on given countries
+ * 
+ * @param {string} address 
+ * @param {Array} values 
+ */
 const pullToData = async (address, values) => {
     const result = [];
     const promises = values.map(val => (
@@ -34,7 +45,10 @@ const countryFetcher = async (values) => {
   return countryList
 }
 
-// Fetches data and converts it to chartjs-appropriate form
+/**
+ * Fetches data and converts it to chartjs-appropriate format
+ * @param {*} values 
+ */
 const dataFetcher = async (values) => {
 
     let co2data = []

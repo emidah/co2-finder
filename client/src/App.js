@@ -70,7 +70,9 @@ class App extends Component {
     this.loadCountries() 
   }
   
-  // Loads initial information about existing countries
+  /**
+   * Loads initial information about existing countries
+   */
   async loadCountries(){
     const countryFetch = countryFetcher()
   
@@ -95,7 +97,10 @@ class App extends Component {
   }
 
 
-  // Called on selection change, fetches data using class data.js
+  /**
+   * Called on selection change, fetches data using data.js
+   * @param {*} countries 
+   */
   async onSelectionChanged(countries){
 
     this.setState({
@@ -123,18 +128,20 @@ class App extends Component {
     
   }
   
-
+  /**
+   * Called on change in "per capita" setting
+   * @param {} event 
+   */
   onPerCapitaChanged(event){
     this.setState({
       isPerCapitaSelected: event.target.checked,
     });
-  
   }
 
   render() {
     let app = (<Loading/>);
     if(this.state.status === "loaded"){
-      const chartData = this.state.isPerCapitaSelected ? this.chartDataPerCapita: this.chartData
+      const chartData = this.state.isPerCapitaSelected ? this.chartDataPerCapita : this.chartData
 
       app = (
       <Loaded 

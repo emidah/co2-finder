@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import {Line} from 'react-chartjs-2';
 
-// Adds a bordercolor to each entry in the dataset
+/**
+ * Adds a bordercolor to each entry in the dataset. Datasets have to be in react-chartjs-2 format.
+ * @param {Array} dataset 
+ */
 const colorize = (dataset) => {
     const colorPool = ["red", "green", "blue", "yellow", "black", "purple", "grey", "orange"]
     let colors = colorPool.slice()
