@@ -28,12 +28,12 @@ module.exports = class Database {
 
         // Set up downloads
         const popOptions = {
-            url: 'localhost',//'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
+            url: 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
             encoding: null
           };
 
         const co2Options = {
-            url: 'localhost', //http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
+            url: 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
             encoding: null
           };
 
@@ -93,7 +93,11 @@ module.exports = class Database {
 
 }
 
-// Unzips files with input and output paths...
+/**
+ * Unzips files, takes input and output paths
+ * @param {string} inputname 
+ * @param {string} outputname 
+ */
 function unZip(inputname,outputname) {
 
     // Boilerplate stuff copied
@@ -112,14 +116,17 @@ function unZip(inputname,outputname) {
     try {
         fs.mkdirSync('data')
     } catch (err) {
-
     }
 
     fs.renameSync(filename, outputname);
 
 }
 
-// Removes the first few lines of useless CSV data
+/**
+ * Removes the first few lines of useless CSV data. Checks for the word "Country", 
+ * as that should always be in the header row of our dataset.
+ * @param {*} filename 
+ */
 function trimLines(filename){
     const file = fs.readFileSync(filename, 'utf8');
     
