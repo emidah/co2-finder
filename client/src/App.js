@@ -30,7 +30,7 @@ const Footer = (props) => (
 // The main displayed page
 const Loaded = (props) => (
   <div className="App">
-    <h1>CO2 data by country</h1>
+    <h1>CO2 emissions by country and region</h1>
     <div className='Dropdown'>
       <Dropdown 
         options={props.options} 
