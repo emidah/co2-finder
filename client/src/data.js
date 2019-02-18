@@ -32,6 +32,15 @@ const pullToData = async (address, values) => {
       })
     );
     await Promise.all(promises)
+    // make sure array is sorted the same as input
+    
+    result.sort( (a,b) => {
+      const aval = values.findIndex( x => x.value === a["Country Code"])
+      const bval = values.findIndex( x => x.value === b["Country Code"])
+      if (aval > bval) return 1
+      if (aval < bval) return -1
+      else return 0
+    });
     return result
   }
 

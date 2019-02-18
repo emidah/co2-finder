@@ -13,6 +13,17 @@ module.exports = class Database {
 
     async initialize() {
 
+        try {
+            fs.mkdirSync('data')
+        } catch (err) {
+        }
+    
+
+        try {
+            fs.mkdirSync('downloads')
+        } catch (err) {
+        }
+    
         // Paths for downloaded zip files
         const popZipPath = "./downloads/pop.zip"
         const co2ZipPath = "./downloads/co2.zip"
@@ -94,7 +105,7 @@ module.exports = class Database {
 }
 
 /**
- * Unzips files, takes input and output paths
+ * Unzips the file without "metadata" in the title, takes input and output paths
  * @param {string} inputname 
  * @param {string} outputname 
  */
@@ -113,11 +124,6 @@ function unZip(inputname,outputname) {
         }
     });
     
-    try {
-        fs.mkdirSync('data')
-    } catch (err) {
-    }
-
     fs.renameSync(filename, outputname);
 
 }
