@@ -67,13 +67,12 @@ class App extends Component {
       isPerCapitaSelected: false,
     }
 
-    this.loadCountries() 
   }
   
   /**
    * Loads initial information about existing countries
    */
-  async loadCountries(){
+  async componentDidMount(){
     const countryFetch = countryFetcher()
   
     countryFetch.catch((err) => {
