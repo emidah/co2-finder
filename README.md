@@ -36,3 +36,7 @@ in json format. The countries are served at
 (Although these responses match, it isn't obvious they do as they are derived from separate datasets.)
 
 The frontend is built with create-react-app. It mostly combines react-select and graph.js.
+
+## How does it stay updated? 
+
+In its current state, the app depends on Heroku's 24 hour restart cycle for reloading its data into memory. If at the time of restart the World Bank API is not available, a backup is loaded instead.
