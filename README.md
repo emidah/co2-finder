@@ -19,6 +19,8 @@ npm start
 
 The application will be live at http://localhost:5000
 
+Note that currently the csv download addresses are set to localhost to not create unnecessary requests to the api.
+
 ## How does it work
 
 The server is based on nodejs+express. It first downloads the data .csvs, loads them into memory and then serves them each line at
