@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Dropdown from './Dropdown'
-import Chart from './Chart'
+import {Chart} from './Chart'
 import { dataFetcher, countryFetcher } from './data';
 
 // Displayed while the app is loading
@@ -98,7 +98,7 @@ class App extends Component {
 
   /**
    * Called on selection change, fetches data using data.js
-   * @param {*} countries 
+   * @param {[{value: "x", label: "y"}]} countries 
    */
   async onSelectionChanged(countries){
 

@@ -44,7 +44,11 @@ const pullToData = async (address, values) => {
     return result
   }
 
-const countryFetcher = async (values) => {
+/**
+ * fetches all countries from server
+ * data in format Object {value: "USA", label: "United States"}
+ */
+const countryFetcher = async () => {
   let countryList = []
   await axios.get('/api/co2/countries')
     .then(function (response) {
@@ -116,4 +120,4 @@ const dataFetcher = async (values) => {
 
 }
 
-export {dataFetcher, countryFetcher}
+export {countryFetcher, dataFetcher, pullToData}

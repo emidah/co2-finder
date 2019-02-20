@@ -67,4 +67,4 @@ class Chart extends Component {
     }
 }  
 
-export default Chart
+export { Chart, colorize }
