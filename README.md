@@ -43,4 +43,4 @@ In its current state, the app depends on Heroku's 24 hour restart cycle for relo
 
 ### Loaded into memory? Why does it not use a database?
 
-In its current state the app runs on a single dyno, and the size of the data is under one megabyte. A database seems overkill for this situation. I played around with a free Heroku PostgreSQL database, but decided to simplify instead.
+In its current state the app runs on a single dyno, and the size of the data is under one megabyte. A database seems overkill to me. I played around with a free Heroku PostgreSQL database, but ultimately decided to keep the application simple instead since it works perfectly as is.
