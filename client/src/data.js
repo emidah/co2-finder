@@ -149,4 +149,4 @@ const dataFetcher = async (values) => {
 
 }
 
-export {countryFetcher, dataFetcher, pullToData, topCo2Fetcher}
+export {countryFetcher, dataFetcher, pullToData, topCo2Fetcher, getYearLabels}

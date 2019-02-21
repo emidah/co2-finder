@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import renderer from 'react-test-renderer';
-import {dataFetcher, countryFetcher, pullToData} from './data'
+import {dataFetcher, countryFetcher, pullToData, getYearLabels} from './data'
 import axios from 'axios';
 
 jest.mock('axios');
@@ -61,7 +61,7 @@ it('dataFetcher works correctly, and the data is valid', () => {
         {label: "World", value: "WLD"},
         {label: "random string", value: "FIN"}
     ]
-    
+
     const resp = {data: {"Country Name": "Name", "Country Code": "NME", "1960": "0"}}
     axios.get.mockImplementation(() => Promise.resolve(resp))
 
@@ -79,3 +79,14 @@ it('dataFetcher works correctly, and the data is valid', () => {
         }
     })
 })
+
+it('getYearLabels works correctly', () => {
+    const data1 = [{}]
+    const data2 = [{}]
+    for(let i=1960; i<2050; i++){
+        data1[0][i] = "0"
+        data2[0][i] = "0"
+    }
+    const labels = getYearLabels(data1,data2)
+    expect(labels.length).toBe(2050-1960)
+});
