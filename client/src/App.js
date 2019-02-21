@@ -38,10 +38,15 @@ const Loaded = (props) => (
         onChange={props.onChange}
         isDisabled={!props.dataLoaded}
         defaultValue={props.defaultValue}/>
+    </div>
+    <div className="flexContainer">
+      <div className="Chart">
+        <Chart labels={props.labels} 
+        datasets={props.chartData}/>
       </div>
-    <div className="Chart">
-      <Chart labels={props.labels} 
-      datasets={props.chartData}/>
+      <div className="top10">
+        <p>test</p>
+      </div>
     </div>
     <div className="Options">
       <Options onPerCapitaChanged={props.onPerCapitaChanged} />

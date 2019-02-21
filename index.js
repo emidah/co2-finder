@@ -41,7 +41,7 @@ function runApp() {
     });
 
     // Return specific country co2 data
-    app.get( '/api/:data/:country', (req,res) => {    
+    app.get( '/api/:data/countries/:country', (req,res) => {    
         let dataSource = []
 
         if (req.params.data === "co2"){

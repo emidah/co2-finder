@@ -67,8 +67,8 @@ const dataFetcher = async (values) => {
     let co2data = []
     let popdata = []
 
-    const co2pull = pullToData('/api/co2/', values)
-    const poppull = pullToData('/api/pop/', values)
+    const co2pull = pullToData('/api/co2/countries/', values)
+    const poppull = pullToData('/api/pop/countries/', values)
 
     co2data = await co2pull
     popdata = await poppull

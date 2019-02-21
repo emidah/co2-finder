@@ -1,31 +1,25 @@
 .App {
   margin: auto;
-  max-width: 700px;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  max-width: 900px;
 }
 
 .App-link {
   color: #61dafb;
 }
 
-.Chart {
+.flexContainer {
   margin-top: 10px;
+  display: flex;
+}
+
+.Chart {
+  height: 300px;
   border: 1px solid rgb(196,196,196);
   border-radius: 5px;
   padding: 5px 10px 10px 5px;
   background-color: #ffffff;
-  height: 60vh;
   max-height: 300px;
+  width: 80%;
 }
 
 .ChartTitle {
@@ -58,4 +52,31 @@ h3 {
 }
 .Footer a {
   color:  #424242
+}
+
+.top10{
+  margin-left: 10px;
+  width: 20%;
+  height: auto;
+  border: 1px solid rgb(196,196,196);
+  border-radius: 5px;
+  background-color: #ffffff;
+}
+
+@media screen and (max-width: 700px) {
+  .flexContainer {
+    flex-direction: column;
+  }
+
+  .top10{
+    margin-top: 10px;
+    margin-left: 0px; 
+    width: 100%;
+
+  }
+
+  .Chart{
+    margin: 0px;
+    width: auto;
+  }
 }
