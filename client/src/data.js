@@ -33,14 +33,6 @@ const pullToData = async (address, values) => {
     );
     await Promise.all(promises)
     // make sure array is sorted the same as input
-    
-    result.sort( (a,b) => {
-      const aval = values.findIndex( x => x.value === a["Country Code"])
-      const bval = values.findIndex( x => x.value === b["Country Code"])
-      if (aval > bval) return 1
-      if (aval < bval) return -1
-      else return 0
-    });
     return result
   }
 
@@ -58,6 +50,25 @@ const countryFetcher = async () => {
   return countryList
 }
 
+const topCo2Fetcher = async (count) => {
+  const res = await axios.get('/api/co2/top/'+count)
+  const data = res.data
+  let max = 2010
+  for(let i = 2010; i<2100; i++){
+    if (typeof data[0][i] === 'undefined' || data[0][i] === ''){
+      max = i-1;
+      break;
+    } 
+  }
+
+  return data.map(x => ({
+    value: x['Country Code'],
+    label: x['Country Name'],
+    year: max,
+    emissions: x[max]
+  }));
+}
+
 /**
  * Fetches data and converts it to chartjs-appropriate format
  * @param {*} values 
@@ -72,6 +83,24 @@ const dataFetcher = async (values) => {
 
     co2data = await co2pull
     popdata = await poppull
+
+
+    co2data.sort( (a,b) => {
+      const aval = values.findIndex( x => x.value === a["Country Code"])
+      const bval = values.findIndex( x => x.value === b["Country Code"])
+      if (aval > bval) return 1
+      if (aval < bval) return -1
+      else return 0
+    });
+
+
+    popdata.sort( (a,b) => {
+      const aval = values.findIndex( x => x.value === a["Country Code"])
+      const bval = values.findIndex( x => x.value === b["Country Code"])
+      if (aval > bval) return 1
+      if (aval < bval) return -1
+      else return 0
+    });
     
     // Chart needs labels. Only years where both datas are found are valid.
     const chartLabels = getYearLabels(co2data,popdata)
@@ -120,4 +149,4 @@ const dataFetcher = async (values) => {
 
 }
 
-export {countryFetcher, dataFetcher, pullToData}
+export {countryFetcher, dataFetcher, pullToData, topCo2Fetcher}
