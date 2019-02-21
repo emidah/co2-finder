@@ -19,7 +19,7 @@ npm start
 
 The application will be live at http://localhost:5000
 
-Note that currently the csv download addresses are set to localhost to not create unnecessary requests to the api.
+Note that the application will not make real api calls in non-production environments.
 
 ## How does it work
 
@@ -33,6 +33,10 @@ in json format. The countries are served at
 ```
 /api/co2/countries
 /api/pop/countries
+```
+and top polluters at
+```
+/api/co2/top/[COUNT]
 ```
 
 (Although these responses match, it isn't obvious they do as they are derived from separate datasets.)
