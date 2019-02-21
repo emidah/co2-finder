@@ -6,7 +6,7 @@ A project developed based on the [Reaktor](https://www.reaktor.com/preliminary-a
 
 Population and emissions data courtesy of the World Bank, used under the CC4.0 license.
 
-## How to run
+## How to run it
 
 ```
 cd client/
@@ -19,13 +19,15 @@ npm start
 
 The application will be live at http://localhost:5000
 
+Note that currently the csv download addresses are set to localhost to not create unnecessary requests to the api.
+
 ## How does it work
 
 The server is based on nodejs+express. It first downloads the data .csvs, loads them into memory and then serves them each line at
 
 ```
-/api/co2/[country]
-/api/pop/[country]
+/api/co2/[COUNTRY CODE]
+/api/pop/[COUNTRY CODE]
 ```
 in json format. The countries are served at 
 ```
@@ -36,3 +38,11 @@ in json format. The countries are served at
 (Although these responses match, it isn't obvious they do as they are derived from separate datasets.)
 
 The frontend is built with create-react-app. It mostly combines react-select and graph.js.
+
+## How does it stay updated? 
+
+In its current state, the app depends on Heroku's 24 hour restart cycle for reloading its data into memory. If at the time of restart the World Bank API is not available, a backup is loaded instead. 
+
+### Loaded into memory? Why does it not use a database?
+
+In its current state the app runs on a single dyno, and the size of the data is under one megabyte. A database seems overkill to me. I played around with a free Heroku PostgreSQL database, but ultimately decided to keep the application simple instead since it works perfectly as is.
