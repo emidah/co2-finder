@@ -3,6 +3,12 @@
   max-width: 900px;
 }
 
+.tile{
+  border: 1px solid rgb(196,196,196);
+  border-radius: 5px;
+  background-color: #ffffff;
+}
+
 .App-link {
   color: #61dafb;
 }
@@ -14,10 +20,7 @@
 
 .Chart {
   height: 300px;
-  border: 1px solid rgb(196,196,196);
-  border-radius: 5px;
   padding: 5px 10px 10px 5px;
-  background-color: #ffffff;
   max-height: 300px;
   width: 80%;
 }
@@ -26,16 +29,27 @@
   margin-top: 100px;
 }
 
-.top5{
+.top5-container{
   margin-top: 10px;
-  border: 1px solid rgb(196,196,196);
-  border-radius: 5px;
-  background-color: #ffffff;
-  text-align: left;
-  padding-left: 20px;
+  display: flex;
+}
+
+.top5-child{
+  text-align: center;
+  padding-left: 0px;
   padding-top: 0px;
   padding-bottom: 20px;
   font-size: 12pt;
+  width: 50%;
+}
+
+table {
+  margin: auto;
+  text-align: left;
+}
+
+.top5PerCapita{
+  margin-left: 10px;
 }
 
 .Dropdown {
@@ -50,6 +64,7 @@ h3 {
   font-size: 8pt;
   color: #929292;
 }
+
 .Footer a {
   color:  #424242
 }
@@ -59,9 +74,6 @@ h3 {
   padding: 0px 20px 20px 20px;
   height: auto;
   width: 20%;
-  border: 1px solid rgb(196,196,196);
-  border-radius: 5px;
-  background-color: #ffffff;
   text-align: left;
 }
 

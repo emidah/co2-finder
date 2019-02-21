@@ -110,10 +110,63 @@ module.exports = class Database {
 
         //Json objecs are Arrays, we want hashmaps.
         this.pop_data = new Map(pop_data.map(i => [i['Country Code'], i]));
-        this.co2_data = new Map(co2_data.map(i => [i['Country Code'], i]));
+        this.co2_data = new Map(co2_data.map(i => [i['Country Code'], i])); 
         
+        let max = 2010;
+        for(let i = 2010; i<3000; i++){
+            if(!(i in this.co2_data.get("USA")) || this.co2_data.get("USA")[i] === ''){
+                max = i - 1;
+                break;
+            }
+        }
+
+        this.topCo2PerCapita = this.getTop(99, co2_data.map(x => {
+            const obj = {
+                "Country Name": x["Country Name"],
+                "Country Code": x["Country Code"],
+            }
+            obj[max] = (parseFloat(x[max]) / parseFloat( this.pop_data.get(x["Country Code"])[max] ))
+            obj["data"] = obj[max]
+            obj["year"] = max
+            //console.log(obj)
+            return obj;
+        }));
     }
 
+    getTop(count, data){
+        let max = 2000;
+        for(let i = 2100; i>1960; i--){
+            if((i in data[0]) && data[0][i] !== ''){
+                max = i;
+                break;
+            }
+        }
+
+        //filter out all the non-country data
+        data = data.map(x => {
+            if(! (x["Country Name"].includes('total') 
+            || x["Country Name"].includes('World')
+            || x["Country Name"].includes('income')
+            || x["Country Name"].includes('IBRD')
+            || x["Country Name"].includes('demographic')
+            || x["Country Name"].includes('Asia')
+            || x["Country Name"].includes('Euro')
+            || x["Country Name"].includes('America')
+            || x["Country Name"].includes('OECD')
+            || x["Country Name"].includes('Africa')
+            )) return x
+        })
+        data.sort( (a,b) => {
+            if ((a[max] === "" && b[max] !== "" ) || parseFloat(a[max]) < parseFloat(b[max])){
+                return 1
+            }
+            if ( (a[max] !== "" && b[max] === "" ) || parseFloat(a[max]) > parseFloat(b[max])) {
+                return -1
+            }
+            return 0
+        })
+        return data.slice(0,count)
+    }
 }
 
 /**

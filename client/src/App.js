@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Dropdown from './Dropdown'
 import {Chart} from './Chart'
-import { dataFetcher, countryFetcher, topCo2Fetcher } from './data';
-import {Top5, Options, Footer} from './simpleComponents' 
+import { dataFetcher, countryFetcher, topFetcher } from './data';
+import {Top5, Options, Footer, Top5PerCapita} from './simpleComponents' 
 
 // Displayed while the app is loading
 const Loading = () => (
@@ -27,16 +27,21 @@ const Loaded = (props) => {
         defaultValue={props.defaultValue}/>
     </div>
     <div className="flexContainer">
-      <div className="Chart">
+      <div className="Chart tile">
         <Chart labels={props.labels} 
         datasets={props.chartData}/>
       </div>
-      <div className="Options">
+      <div className="Options tile">
         <Options onPerCapitaChanged={props.onPerCapitaChanged} />
       </div>
     </div>
-    <div className="top5">
-        <Top5 top5={props.top5}/>
+    <div className="top5-container">
+      <div className="top5 top5-child tile">
+          <Top5 top5={props.top5}/>
+      </div>
+      <div className="top5PerCapita top5-child tile">
+        <Top5PerCapita top5={props.top5PerCapita} /> 
+      </div>
     </div>
     <div className="Footer">
       <Footer />
@@ -66,20 +71,27 @@ class App extends Component {
    */
   async componentDidMount(){
     const countryFetch = countryFetcher()
-    const top5Co2Fetch = topCo2Fetcher(5)
+    const top5Fetch = topFetcher('/api/co2/top/', 5)
+    const top5perCapitaFetch = topFetcher('/api/co2/toppercapita/', 5)
   
     countryFetch.catch((err) => {
       this.setState({status: "errored"});
       console.log(err)
     })
 
-    top5Co2Fetch.catch((err) => {
+    top5Fetch.catch((err) => {
+      this.setState({status: "errored"});
+      console.log(err)
+    })
+
+    top5perCapitaFetch.catch((err) => {
       this.setState({status: "errored"});
       console.log(err)
     })
 
     this.countryList = await countryFetch
-    this.top5 = await top5Co2Fetch
+    this.top5 = await top5Fetch
+    this.top5PerCapita = await top5perCapitaFetch
 
     // Used for easier searches of countries (hashmap)
     this.countryLookup = new Map( this.countryList.map( 
@@ -150,7 +162,8 @@ class App extends Component {
         labels={this.chartLabels}
         defaultValue={this.defaultValue}
         onPerCapitaChanged={this.onPerCapitaChanged.bind(this)}
-        top5={this.top5}/>
+        top5={this.top5}
+        top5PerCapita={this.top5PerCapita}/>
         );
 
     } else if (this.state.status === "errored"){

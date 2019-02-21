@@ -50,13 +50,13 @@ const countryFetcher = async () => {
   return countryList
 }
 
-const topCo2Fetcher = async (count) => {
-  const res = await axios.get('/api/co2/top/'+count)
+const topFetcher = async (address, count) => {
+  const res = await axios.get(address+count)
   const data = res.data
   let max = 2010
-  for(let i = 2010; i<2100; i++){
-    if (typeof data[0][i] === 'undefined' || data[0][i] === ''){
-      max = i-1;
+  for(let i = 2100; i>2000; i--){
+    if (typeof data[0][i] !== 'undefined' && data[0][i] !== ''){
+      max = i;
       break;
     } 
   }
@@ -149,4 +149,4 @@ const dataFetcher = async (values) => {
 
 }
 
-export {countryFetcher, dataFetcher, pullToData, topCo2Fetcher, getYearLabels}
+export {countryFetcher, dataFetcher, pullToData, topFetcher, getYearLabels}

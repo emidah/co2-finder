@@ -6,21 +6,31 @@ const Footer = (props) => (
     </div>
   )
   
-const Top5 = (props) => {
-    const Tops = () => {
-        let counter = 1;
-        return props.top5.map(item => (
+  const Tops = (props) => {
+    let counter = 1;
+    return props.top5.map(item => (
         <tr key={item.label}>
-        <td>{counter++}. </td> 
-        <td>{item.label}</td>
-        <td>{parseFloat(item.emissions).toLocaleString('en-US')}</td> 
+            <td>{counter++}. </td> 
+            <td>{item.label}</td>
+            <td>{parseFloat(item.emissions).toLocaleString('en-US')}</td> 
         </tr>));
-    }
-
-return(<div><h3>Top 5 total (kt, {props.top5[0].year})</h3>
-    <table><tbody><Tops /></tbody></table>
-    </div>)
 }
+
+const Top5 = (props) => (
+    <div>
+        <h3>Top 5 total (kt, {props.top5[0].year})</h3>
+        <table><tbody>
+            <Tops top5={props.top5} />
+        </tbody></table>
+    </div>);
+
+const Top5PerCapita = (props) => (
+    <div>
+        <h3>Top 5 per capita (kt, {props.top5[0].year})</h3>
+        <table><tbody><Tops top5={props.top5} /></tbody></table>
+    </div>
+);
+
 
 const Options = (props) => (
 <div>
@@ -32,4 +42,4 @@ const Options = (props) => (
 </div>
 )  
 
-export {Footer, Top5, Options}
+export {Footer, Top5, Options, Top5PerCapita}
