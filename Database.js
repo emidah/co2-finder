@@ -37,14 +37,22 @@ module.exports = class Database {
         let co2Path = "./data/co2.csv"
 
 
+        let popUrl = "http://localhost"
+        let co2Url = "http://localhost"
+        if (process.env.NODE_ENV === 'production') {
+            console.log("production mode, api calls enabled")
+            popUrl = 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv'
+            coUrl = 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv'
+        }
+
         // Set up downloads
         const popOptions = {
-            url: 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv',
+            url: popUrl,
             encoding: null
           };
 
         const co2Options = {
-            url: 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv',
+            url: co2Url,
             encoding: null
           };
 
@@ -58,7 +66,9 @@ module.exports = class Database {
         .catch(function (err){
             co2Path = co2BackupPath
             trimLines(co2Path);
-            console.log(err)
+            if(process.env.NODE_ENV === 'production' || err.error.errno !== 'ECONNREFUSED'){
+                console.log(err)
+            }
         });   
 
         // Download population zip data from world bank API, write it to a file, unzip it and remove the csv metadata lines
@@ -71,7 +81,9 @@ module.exports = class Database {
         .catch(function (err){
             popPath = popBackupPath
             trimLines(popPath);
-            console.log(err)
+            if(process.env.NODE_ENV === 'production' || err.error.errno !== 'ECONNREFUSED'){
+                console.log(err)
+            }
         });
         
         await poprequest
