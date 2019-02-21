@@ -29,17 +29,16 @@ The server is based on nodejs+express. It first downloads the data .csvs, loads 
 /api/co2/[COUNTRY CODE]
 /api/pop/[COUNTRY CODE]
 ```
-in json format. The countries are served at 
+in json format. Top polluters are at
+```
+/api/co2/top/[COUNT]
+```
+and all countries at 
 ```
 /api/co2/countries
 /api/pop/countries
 ```
-and top polluters at
-```
-/api/co2/top/[COUNT]
-```
-
-(Although these responses match, it isn't obvious they do as they are derived from separate datasets.)
+(Although these last two responses match, it isn't obvious they do as they are derived from separate datasets.)
 
 The frontend is built with create-react-app. It mostly combines react-select and graph.js.
 
