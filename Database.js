@@ -42,7 +42,7 @@ module.exports = class Database {
         if (process.env.NODE_ENV === 'production') {
             console.log("production mode, api calls enabled")
             popUrl = 'http://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv'
-            coUrl = 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv'
+            co2Url = 'http://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv'
         }
 
         // Set up downloads
