@@ -36,7 +36,8 @@
 
 .top5-child{
   text-align: center;
-  padding-left: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
   padding-top: 0px;
   padding-bottom: 20px;
   font-size: 12pt;
@@ -93,5 +94,9 @@ h3 {
   .Chart{
     margin: 0px;
     width: auto;
+  }
+
+  .top5-child{
+    font-size: 12px;
   }
 }
