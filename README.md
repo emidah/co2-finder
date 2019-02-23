@@ -32,6 +32,7 @@ The server is based on nodejs+express. It first downloads the data .csvs, loads 
 in json format. Top polluters are at
 ```
 /api/co2/top/[COUNT]
+/api/co2/toppercapita/[COUNT]
 ```
 and all countries at 
 ```
