@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 
 const page = (
-        <App/>
-)
-
+  <App />
+);
 ReactDOM.render(page, document.getElementById('root'));
