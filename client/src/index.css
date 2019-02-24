@@ -13,7 +13,7 @@ body {
 html {
   margin: 0;
   padding: 0;
-  background: url('co2.png') no-repeat center center fixed;
+  background: url('co2.jpg') no-repeat center center fixed;
   background-color: rgba(255, 255, 255, 0.616);
   background-size: cover;
   background-blend-mode: overlay;
