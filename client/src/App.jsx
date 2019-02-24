@@ -118,6 +118,7 @@ class App extends Component {
 
     if (status === 'loaded') {
       const chartData = isPerCapitaSelected ? this.chartDataPerCapita : this.chartData;
+      const overlayMode = isDataLoaded ? 'none' : 'block';
       app = (
         <div className="App">
           <h1>CO2 emissions by country and region</h1>
@@ -137,9 +138,14 @@ class App extends Component {
                 labels={this.chartLabels}
                 datasets={chartData}
               />
+              <div className="overlay" style={{ display: overlayMode }} />
             </div>
             <div className="Options tile">
-              <Options onPerCapitaChanged={this.onPerCapitaChanged} />
+              <Options
+                onPerCapitaChanged={this.onPerCapitaChanged}
+                isPerCapitaSelected={isPerCapitaSelected}
+              />
+              <div className="overlay" style={{ display: overlayMode }} />
             </div>
           </div>
           <div className="top5-container">
@@ -147,12 +153,24 @@ class App extends Component {
               <Top5
                 top5={this.top5}
                 title={`Top emitters (kt, ${this.top5[0].year})`}
+                onButtonClicked={() => {
+                  this.onSelectionChanged(this.top5);
+                  this.setState({
+                    isPerCapitaSelected: false,
+                  });
+                }}
               />
             </div>
             <div className="top5PerCapita top5-child tile">
               <Top5
                 top5={this.top5PerCapita}
                 title={`Top emitters per capita (kt, ${this.top5[0].year})`}
+                onButtonClicked={() => {
+                  this.onSelectionChanged(this.top5PerCapita);
+                  this.setState({
+                    isPerCapitaSelected: true,
+                  });
+                }}
               />
             </div>
           </div>

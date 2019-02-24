@@ -31,7 +31,7 @@ const Tops = (props) => {
 };
 
 const Top5 = (props) => {
-  const { title, top5 } = props;
+  const { title, top5, onButtonClicked } = props;
   return (
     <div>
       <h3>
@@ -42,6 +42,7 @@ const Top5 = (props) => {
           <Tops top5={top5} />
         </tbody>
       </table>
+      <button className="topButton" type="button" onClick={onButtonClicked}>Show</button>
     </div>
   );
 };
@@ -54,20 +55,22 @@ Top5.propTypes = {
     year: PropTypes.string.isRequried,
   })),
   title: PropTypes.string,
+  onButtonClicked: PropTypes.func,
 };
 
 Top5.defaultProps = {
   top5: [],
   title: '',
+  onButtonClicked: () => {},
 };
 
 const Options = (props) => {
-  const { onPerCapitaChanged } = props;
+  const { onPerCapitaChanged, isPerCapitaSelected } = props;
   return (
     <div>
       <h3>Options</h3>
-      <label htmlFor="perCapita" id="perCapita">
-        <input type="checkbox" onChange={onPerCapitaChanged} />
+      <label htmlFor="perCapita" id="perCapitaLabel">
+        <input id="perCapita" checked={isPerCapitaSelected} type="checkbox" onChange={onPerCapitaChanged} />
         &nbsp;Per capita
       </label>
     </div>
@@ -76,10 +79,12 @@ const Options = (props) => {
 
 Options.propTypes = {
   onPerCapitaChanged: PropTypes.func,
+  isPerCapitaSelected: PropTypes.bool,
 };
 
 Options.defaultProps = {
   onPerCapitaChanged: () => {},
+  isPerCapitaSelected: false,
 };
 
 export {

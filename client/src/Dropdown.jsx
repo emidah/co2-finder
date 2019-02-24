@@ -5,39 +5,31 @@ import PropTypes from 'prop-types';
 class Dropdown extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      isFull: false,
-    };
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(values) {
     const { onChange, maxValues } = this.props;
-    // Make sure it's impossible to pick more than max
-    if (values.length > (maxValues)) {
-      this.setState({
-        isFull: true,
-      });
-    } else {
-      this.setState({
-        isFull: false,
-      });
-
-      if (values.length === maxValues) {
-        this.setState({
-          isFull: true,
-        });
-      }
-      if (typeof onChange === 'function') onChange(values);
+    if (values.length <= (maxValues)) {
+      onChange(values);
     }
   }
 
   render() {
     let { options } = this.props;
-    const { defaultValue, isDisabled, selected } = this.props;
-    const { isFull } = this.state;
-    if (isFull) options = [];
+    const {
+      defaultValue, isDisabled, selected, maxValues,
+    } = this.props;
+
+    // Make sure it's impossible to pick more than max
+    if (selected.length === maxValues) {
+      options = [
+        {
+          label: 'Please remove a country before adding another',
+          value: 'none',
+        }];
+    }
+
     return (
       <Select
         value={selected}

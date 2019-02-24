@@ -3,7 +3,7 @@
   max-width: 900px;
 }
 
-.tile{
+.tile {
   border: 1px solid rgb(196,196,196);
   border-radius: 5px;
   background-color: #ffffff;
@@ -23,13 +23,14 @@
   padding: 5px 10px 10px 5px;
   max-height: 300px;
   width: 80%;
+  position: relative;
 }
 
 .ChartTitle {
   margin-top: 100px;
 }
 
-.top5-container{
+.top5-container {
   margin-top: 10px;
   display: flex;
 }
@@ -76,6 +77,27 @@ h3 {
   height: auto;
   width: 20%;
   text-align: left;
+  position: relative;
+}
+
+.topButton {
+  border: 0px solid rgb(196,196,196);
+  padding: 10px 20px;
+  margin-top: 10px;
+  font-size: 12pt;
+  border-radius: 2px;
+}
+
+.overlay {
+  position: absolute; /* Sit on top of the page content */
+  width: auto; /* Full width (cover the whole page) */
+  height: auto; /* Full height (cover the whole page) */
+  top: 0; 
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.05); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
 }
 
 @media screen and (max-width: 950px) {
@@ -97,6 +119,6 @@ h3 {
   }
 
   .top5-child{
-    font-size: 12px;
+    font-size: 10pt;
   }
 }

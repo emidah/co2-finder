@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 /**
- * Gets year labels by checking the years that exist in both datasets.
+ * Gets year labels by checking the years that exist as properties in both datasets.
  * @param {} data1
  * @param {} data2
  */
@@ -20,7 +20,7 @@ const getYearLabels = (data1, data2) => {
 /**
  * Fetches data from the set address based on given countries
  * @param {string} address
- * @param {Array} values
+ * @param { [{ value: "CDE" }] } values
  */
 const pullToData = async (address, values) => {
   const result = [];
