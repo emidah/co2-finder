@@ -6,7 +6,7 @@
 .tile {
   border: 1px solid rgb(196,196,196);
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.856);
+  background-color: rgba(255, 255, 255, 0.815);
 }
 
 .App-link {
@@ -56,6 +56,8 @@ table {
 
 .Dropdown {
   text-align: left;
+  position: relative;
+  z-index: 3;
 }
 
 h3 {
@@ -89,15 +91,15 @@ h3 {
 }
 
 .overlay {
-  position: absolute; /* Sit on top of the page content */
-  width: auto; /* Full width (cover the whole page) */
-  height: auto; /* Full height (cover the whole page) */
+  position: absolute;
+  width: auto; 
+  height: auto; 
   top: 0; 
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.05); /* Black background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  background-color: rgba(0,0,0,0.05); 
+  z-index: 2; 
 }
 
 @media screen and (max-width: 950px) {

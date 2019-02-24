@@ -118,7 +118,7 @@ class App extends Component {
 
     if (status === 'loaded') {
       const chartData = isPerCapitaSelected ? this.chartDataPerCapita : this.chartData;
-      const overlayMode = isDataLoaded ? 'none' : 'block';
+      const overlayMode = (isDataLoaded && selectedCountries.length > 0) ? 'none' : 'block';
       app = (
         <div className="App">
           <h1>CO2 emissions by country and region</h1>
