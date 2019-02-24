@@ -6,7 +6,7 @@
 .tile {
   border: 1px solid rgb(196,196,196);
   border-radius: 5px;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.856);
 }
 
 .App-link {

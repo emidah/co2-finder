@@ -7,8 +7,16 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f6f6f6;
   color: #333333;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  background: url('co2.png') no-repeat center center fixed;
+  background-color: rgba(255, 255, 255, 0.616);
+  background-size: cover;
+  background-blend-mode: overlay;
 }
 
 code {
