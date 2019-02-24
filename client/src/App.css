@@ -9,10 +9,6 @@
   background-color: rgba(255, 255, 255, 0.815);
 }
 
-.App-link {
-  color: #61dafb;
-}
-
 .flexContainer {
   margin-top: 10px;
   display: flex;
@@ -30,6 +26,15 @@
   margin-top: 100px;
 }
 
+.Options{
+  margin-left: 10px;
+  padding: 0px 20px 20px 20px;
+  height: auto;
+  width: 20%;
+  text-align: left;
+  position: relative;
+}
+
 .top5-container {
   margin-top: 10px;
   display: flex;
@@ -40,18 +45,31 @@
   padding-left: 5px;
   padding-right: 5px;
   padding-top: 0px;
-  padding-bottom: 20px;
   font-size: 12pt;
   width: 50%;
+  padding-bottom: 60px;
+  position: relative;
+}
+
+.topButton {
+  border: 0px solid rgb(196,196,196);
+  padding: 10px 20px;
+  margin-top: 10px;
+  font-size: 12pt;
+  border-radius: 2px;
+  position: absolute;
+  bottom: 10px;
+  width: 120px;
+  left: calc(50% - 60px);
+}
+
+.top5PerCapita{
+  margin-left: 10px;
 }
 
 table {
   margin: auto;
   text-align: left;
-}
-
-.top5PerCapita{
-  margin-left: 10px;
 }
 
 .Dropdown {
@@ -73,23 +91,6 @@ h3 {
   color:  #424242
 }
 
-.Options{
-  margin-left: 10px;
-  padding: 0px 20px 20px 20px;
-  height: auto;
-  width: 20%;
-  text-align: left;
-  position: relative;
-}
-
-.topButton {
-  border: 0px solid rgb(196,196,196);
-  padding: 10px 20px;
-  margin-top: 10px;
-  font-size: 12pt;
-  border-radius: 2px;
-}
-
 .overlay {
   position: absolute;
   width: auto; 
@@ -102,7 +103,7 @@ h3 {
   z-index: 2; 
 }
 
-@media screen and (max-width: 950px) {
+@media screen and (max-width: 930px) {
   .flexContainer {
     flex-direction: column;
     align-content: left;
@@ -119,8 +120,19 @@ h3 {
     margin: 0px;
     width: auto;
   }
+}
 
+@media screen and (max-width: 700px) {
   .top5-child{
-    font-size: 10pt;
+    width: auto;
+  }
+
+  .top5PerCapita{
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .top5-container {
+    flex-direction: column;
   }
 }
