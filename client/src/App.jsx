@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import './App.css';
+import './styles/App.css';
 import Dropdown from './components/Dropdown';
 import { Chart } from './components/Chart';
 import { dataFetcher, countryFetcher, topFetcher } from './data';
-import {
-  Top5, Options, Footer,
-} from './components/simpleComponents';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import Top5 from './components/Top5';
+import Options from './components/Options';
 
 // Displayed while the app is loading
 const Loading = () => (
@@ -71,7 +72,6 @@ class App extends Component {
     this.setState({ status: 'loaded' });
   }
 
-
   /**
    * Called on selection change, fetches data using data.js
    * @param {[{value: "x", label: "y"}]} countries
@@ -81,6 +81,8 @@ class App extends Component {
       selectedCountries: countries,
       isDataLoaded: false,
     });
+
+    window.scrollTo(0, 0);
 
     try {
       const charts = await dataFetcher(countries);
@@ -121,7 +123,7 @@ class App extends Component {
       const overlayMode = (isDataLoaded && selectedCountries.length > 0) ? 'none' : 'block';
       app = (
         <div className="App">
-          <h1>CO2 emissions by country and region</h1>
+          <Header title="CO2 emissions by country and region" link="https://github.com/emidah/co2-finder" />
           <div className="Dropdown">
             <Dropdown
               selected={selectedCountries}
@@ -132,7 +134,7 @@ class App extends Component {
               defaultValue={this.defaultValue}
             />
           </div>
-          <div className="flexContainer">
+          <div className="flex-container">
             <div className="Chart tile">
               <Chart
                 labels={this.chartLabels}

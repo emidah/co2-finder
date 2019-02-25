@@ -26,8 +26,8 @@ Note that the application will not make real api calls in non-production environ
 The server is based on nodejs+express. It first downloads the data .csvs, loads them into memory and then serves them each line at
 
 ```
-/api/co2/[COUNTRY CODE]
-/api/pop/[COUNTRY CODE]
+/api/co2/countries/[COUNTRY CODE]
+/api/pop/countries/[COUNTRY CODE]
 ```
 in json format. Top polluters are at
 ```

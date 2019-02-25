@@ -6,10 +6,10 @@
 .tile {
   border: 1px solid rgb(196,196,196);
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.815);
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
-.flexContainer {
+.flex-container {
   margin-top: 10px;
   display: flex;
 }
@@ -57,6 +57,7 @@
   margin-top: 10px;
   font-size: 12pt;
   border-radius: 2px;
+  background-color: rgb(230,230,230);
   position: absolute;
   bottom: 10px;
   width: 120px;
@@ -78,17 +79,29 @@ table {
   z-index: 3;
 }
 
-h3 {
-  font-size: 16pt;
-}
-
 .Footer {
   font-size: 8pt;
-  color: #929292;
+  color: #666666;
+  padding-bottom: 5px;
+  height: auto;
 }
 
-.Footer a {
+
+a {
   color:  #424242
+}
+
+.Header {
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.Header a{
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  margin-right: 0px;
+  width: 100px;
 }
 
 .overlay {
