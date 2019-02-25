@@ -2,7 +2,7 @@
 
 ## Live at https://co2-finder.herokuapp.com
 
-A project developed based on the [Reaktor](https://www.reaktor.com/preliminary-assignment-for-summer-jobs-turku/) summer job assignment requirements, built using nodejs + react.
+A project developed based on the [Reaktor](https://www.reaktor.com/preliminary-assignment-for-summer-jobs-turku/) summer job assignment requirements, built using nodejs + react. The server can be found at this root directory, and the client lives at [/client](/client/).
 
 Population and emissions data courtesy of the World Bank, used under the CC4.0 license.
 
