@@ -117,7 +117,7 @@ a {
 }
 
 @media screen and (max-width: 930px) {
-  .flexContainer {
+  .flex-container {
     flex-direction: column;
     align-content: left;
   }
