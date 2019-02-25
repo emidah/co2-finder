@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import Dropdown from './Dropdown';
-import { Chart } from './Chart';
+import Dropdown from './components/Dropdown';
+import { Chart } from './components/Chart';
 import { dataFetcher, countryFetcher, topFetcher } from './data';
 import {
   Top5, Options, Footer,
-} from './simpleComponents';
+} from './components/simpleComponents';
 
 // Displayed while the app is loading
 const Loading = () => (

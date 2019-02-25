@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 import App from './App';
 
-import { colorize } from './Chart';
-import Dropdown from './Dropdown';
+import { colorize } from './components/Chart';
+import Dropdown from './components/Dropdown';
 
 const countriesToTestWith = [
   { label: 'World', value: 'WLD' },
