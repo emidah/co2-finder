@@ -28,6 +28,9 @@ function runApp() {
             dataSource = db.co2_data
         } else if (req.params.data === "pop"){
             dataSource = db.pop_data
+        } else {
+            res.statusCode(404).json("Dataset not found");
+            return;
         }
 
         const responseData =  Array.from( dataSource.keys() ).map(x => {
@@ -48,12 +51,15 @@ function runApp() {
             dataSource = db.co2_data
         } else if (req.params.data === "pop"){
             dataSource = db.pop_data
+        } else {
+            res.status(404).json("Dataset not found");
+            return;
         }
 
         if( Array.from(dataSource.keys()).includes(req.params.country)) {
             res.json(dataSource.get(req.params.country))
         } else {
-            res.status(404).json("Country not found")
+            res.status(404).json("Country not found");
         }
     } );
 
@@ -62,12 +68,13 @@ function runApp() {
         //console.log(req.params.data)
         if(req.params.top === "top"){
             data = db.getTop(req.params.count, Array.from(db.co2_data.values()));
+            res.json(data)
         } else if (req.params.top === "toppercapita") {
             data = db.topCo2PerCapita.slice(0,req.params.count)
+            res.json(data)
+        } else {
+            res.sendStatus(404);
         }
-
-        res.json(data)
-
     });
 
     const port = process.env.PORT || 5000;
