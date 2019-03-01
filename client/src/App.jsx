@@ -27,7 +27,7 @@ class App extends Component {
     this.state = {
       status: 'loading',
       selectedCountries: [],
-      isDataLoaded: false,
+      isDataLoaded: true,
       isPerCapitaSelected: false,
     };
   }
@@ -77,6 +77,10 @@ class App extends Component {
    * @param {[{value: "x", label: "y"}]} countries
    */
   async onSelectionChanged(countries) {
+    const { isDataLoaded } = this.state;
+
+    if (!isDataLoaded) return;
+
     this.setState({
       selectedCountries: countries,
       isDataLoaded: false,
@@ -106,6 +110,8 @@ class App extends Component {
    * @param {} event
    */
   onPerCapitaChanged(event) {
+    const { isDataLoaded } = this.state;
+    if (!isDataLoaded) return;
     this.setState({
       isPerCapitaSelected: event.target.checked,
     });
@@ -156,9 +162,11 @@ class App extends Component {
                 top5={this.top5}
                 title={`Top emitters (kt, ${this.top5[0].year})`}
                 onButtonClicked={() => {
-                  this.onSelectionChanged(this.top5);
-                  this.setState({
-                    isPerCapitaSelected: false,
+                  if (!isDataLoaded) return;
+                  this.onSelectionChanged(this.top5).then(() => {
+                    this.setState({
+                      isPerCapitaSelected: true,
+                    });
                   });
                 }}
               />
@@ -168,9 +176,11 @@ class App extends Component {
                 top5={this.top5PerCapita}
                 title={`Top emitters per capita (kt, ${this.top5[0].year})`}
                 onButtonClicked={() => {
-                  this.onSelectionChanged(this.top5PerCapita);
-                  this.setState({
-                    isPerCapitaSelected: true,
+                  if (!isDataLoaded) return;
+                  this.onSelectionChanged(this.top5PerCapita).then(() => {
+                    this.setState({
+                      isPerCapitaSelected: true,
+                    });
                   });
                 }}
               />
