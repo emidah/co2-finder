@@ -165,7 +165,7 @@ class App extends Component {
                   if (!isDataLoaded) return;
                   this.onSelectionChanged(this.top5).then(() => {
                     this.setState({
-                      isPerCapitaSelected: true,
+                      isPerCapitaSelected: false,
                     });
                   });
                 }}
