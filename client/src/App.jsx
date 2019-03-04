@@ -18,17 +18,17 @@ const Errored = () => (<h2>There was a problem fetching data from the database</
 class App extends Component {
   constructor(props) {
     super(props);
-    this.chartData = [];
-    this.chartDataPerCapita = [];
-    this.chartLabels = [];
     this.onSelectionChanged = this.onSelectionChanged.bind(this);
     this.onPerCapitaChanged = this.onPerCapitaChanged.bind(this);
 
     this.state = {
+      top5: [],
+      top5PerCapita: [],
       status: 'loading',
       selectedCountries: [],
       isDataLoaded: true,
       isPerCapitaSelected: false,
+      countryList: [],
     };
   }
 
@@ -40,36 +40,34 @@ class App extends Component {
     const top5Fetch = topFetcher('/api/co2/top/', 5);
     const top5perCapitaFetch = topFetcher('/api/co2/toppercapita/', 5);
 
-    countryFetch.catch(() => {
+    let countryList = [];
+    let top5 = [];
+    let top5PerCapita = [];
+
+    try {
+      countryList = await countryFetch;
+      top5 = await top5Fetch;
+      top5PerCapita = await top5perCapitaFetch;
+    } catch (err) {
       this.setState({ status: 'errored' });
       // console.log(err);
-    });
+      return;
+    }
 
-    top5Fetch.catch(() => {
-      this.setState({ status: 'errored' });
-      // console.log(err);
-    });
-
-    top5perCapitaFetch.catch(() => {
-      this.setState({ status: 'errored' });
-      // console.log(err);
-    });
-
-    this.countryList = await countryFetch;
-    this.top5 = await top5Fetch;
-    this.top5PerCapita = await top5perCapitaFetch;
 
     // Used for easier searches of countries (hashmap)
-    this.countryLookup = new Map(this.countryList.map(
+    this.countryLookup = new Map(countryList.map(
       obj => [obj.value, { value: obj.value, label: obj.label }],
     ));
 
-    // Set defaults for the dropdown
-    this.defaultValue = [this.countryLookup.get('USA'), this.countryLookup.get('CHN')];
-    // Set defaults for the chart
-    this.onSelectionChanged(this.defaultValue);
+    const defaultValue = [this.countryLookup.get('USA'), this.countryLookup.get('CHN')];
 
-    this.setState({ status: 'loaded' });
+    // Set defaults for the chart
+    this.onSelectionChanged(defaultValue);
+
+    this.setState({
+      top5, top5PerCapita, countryList,
+    });
   }
 
   /**
@@ -88,21 +86,20 @@ class App extends Component {
 
     window.scrollTo(0, 0);
 
-    try {
-      const charts = await dataFetcher(countries);
-
-      this.chartData = charts.data;
-      this.chartDataPerCapita = charts.dataPerCapita;
-      this.chartLabels = charts.labels;
-
+    // Await so that the overall promise only resolves once everything is done
+    await dataFetcher(countries).then(charts => (
       this.setState({
+        chartData: charts.data,
+        chartDataPerCapita: charts.dataPerCapita,
+        chartLabels: charts.labels,
         isDataLoaded: true,
-      });
-    } catch (err) {
+        status: 'loaded',
+      })
+    )).catch(() => (
       this.setState({
         status: 'errored',
-      });
-    }
+      })
+    ));
   }
 
   /**
@@ -119,13 +116,22 @@ class App extends Component {
 
   render() {
     const {
-      status, selectedCountries, isPerCapitaSelected, isDataLoaded,
+      status,
+      selectedCountries,
+      isPerCapitaSelected,
+      isDataLoaded,
+      top5,
+      top5PerCapita,
+      chartData,
+      chartDataPerCapita,
+      chartLabels,
+      countryList,
     } = this.state;
 
     let app = (<Loading />);
 
     if (status === 'loaded') {
-      const chartData = isPerCapitaSelected ? this.chartDataPerCapita : this.chartData;
+      const finalChartData = isPerCapitaSelected ? chartDataPerCapita : chartData;
       const overlayMode = (isDataLoaded && selectedCountries.length > 0) ? 'none' : 'block';
       app = (
         <div className="App">
@@ -133,18 +139,17 @@ class App extends Component {
           <div className="Dropdown">
             <Dropdown
               selected={selectedCountries}
-              options={this.countryList}
+              options={countryList}
               maxValues={5}
               onChange={this.onSelectionChanged}
               isDisabled={!isDataLoaded}
-              defaultValue={this.defaultValue}
             />
           </div>
           <div className="flex-container">
             <div className="Chart tile">
               <Chart
-                labels={this.chartLabels}
-                datasets={chartData}
+                labels={chartLabels}
+                datasets={finalChartData}
               />
               <div className="overlay" style={{ display: overlayMode }} />
             </div>
@@ -159,11 +164,11 @@ class App extends Component {
           <div className="top5-container">
             <div className="top5 top5-child tile">
               <Top5
-                top5={this.top5}
-                title={`Top emitters (kt, ${this.top5[0].year})`}
+                top5={top5}
+                title={`Top emitters (kt, ${top5[0].year})`}
                 onButtonClicked={() => {
                   if (!isDataLoaded) return;
-                  this.onSelectionChanged(this.top5).then(() => {
+                  this.onSelectionChanged(top5).then(() => {
                     this.setState({
                       isPerCapitaSelected: false,
                     });
@@ -173,11 +178,11 @@ class App extends Component {
             </div>
             <div className="top5PerCapita top5-child tile">
               <Top5
-                top5={this.top5PerCapita}
-                title={`Top emitters per capita (kt, ${this.top5[0].year})`}
+                top5={top5PerCapita}
+                title={`Top emitters per capita (kt, ${top5PerCapita[0].year})`}
                 onButtonClicked={() => {
                   if (!isDataLoaded) return;
-                  this.onSelectionChanged(this.top5PerCapita).then(() => {
+                  this.onSelectionChanged(top5PerCapita).then(() => {
                     this.setState({
                       isPerCapitaSelected: true,
                     });

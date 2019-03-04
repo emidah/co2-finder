@@ -23,17 +23,11 @@ const getYearLabels = (data1, data2) => {
  * @param { [{ value: "CDE" }] } values
  */
 const pullToData = async (address, values) => {
-  const result = [];
   const promises = values.map(val => (
-    axios.get(address + val.value))
-    .then((res) => {
-      result.push(res.data);
-    }));
-  await Promise.all(promises);
+    axios.get(address + val.value)));
   // make sure array is sorted the same as input
-  return result;
+  return (await Promise.all(promises)).map(val => val.data);
 };
-
 /**
  * fetches all countries from server
  * data in format Object {value: "USA", label: "United States"}
