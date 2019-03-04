@@ -29,6 +29,7 @@ class App extends Component {
       isDataLoaded: true,
       isPerCapitaSelected: false,
       countryList: [],
+      chartLabels: [],
     };
   }
 
