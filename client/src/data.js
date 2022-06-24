@@ -10,7 +10,7 @@ const getYearLabels = (data1, data2) => {
   // Loop until found a field doesn't exist anymore: as of writing, this is "2019"
   if (data1.length > 0 && data2.length > 0) {
     for (let i = 1960; i < 2100; i += 1) {
-      if (typeof data1[0][i] === 'undefined' || typeof data2[0][i] === 'undefined') break;
+      if (typeof data1[0][i] === 'undefined' || typeof data2[0][i] === 'undefined') continue;
       labels.push(String(i));
     }
   }
@@ -109,7 +109,7 @@ const dataFetcher = async (values) => {
     const pop = popdata.find(x => x['Country Code'] === entry['Country Code']);
 
     for (let i = 1960; i < 2100; i += 1) {
-      if (typeof entry[i] === 'undefined' || typeof pop[i] === 'undefined') break;
+      if (typeof entry[i] === 'undefined' || typeof pop[i] === 'undefined') continue;
       if (entry[i] === '' || pop[i] === '') {
         data.push(undefined);
         perCapData.push(undefined);

@@ -109,8 +109,38 @@ module.exports = class Database {
         await popObj
 
         //Json objecs are Arrays, we want hashmaps.
-        this.pop_data = new Map(pop_data.map(i => [i['Country Code'], i]));
-        this.co2_data = new Map(co2_data.map(i => [i['Country Code'], i])); 
+        let firstYear1 = 2000;
+        this.pop_data = new Map(pop_data.map(i => 
+            {   
+                while(i[firstYear1+""] !== '' && i[firstYear1+""] != null){
+                    firstYear1--;
+                }
+                return [i['Country Code'], i]
+            }
+            ));
+
+        let firstYear2 = 2000;
+        this.co2_data = new Map(co2_data.map(i =>  {   
+            while(i[firstYear2+""] !== '' && i[firstYear2+""] != null){
+                firstYear2--;
+            }
+            return [i['Country Code'], i]
+        })); 
+
+        let firstYear = Math.max(firstYear1, firstYear2);
+        
+
+        Array.from(this.pop_data.values()).forEach(v => {
+            for(let i = 1960; i <= firstYear; i++){
+                delete v[i+""];
+            }
+        })
+
+        Array.from(this.co2_data.values()).forEach(v => {
+            for(let i = 1960; i <= firstYear; i++){
+                delete v[i+""];
+            }
+        })
         
         let max = 2010;
         for(let i = 2010; i<3000; i++){
