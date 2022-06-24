@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.2",
     "babel-runtime": "^6.26.0",
     "chart.js": "^2.7.3",
     "create-react-app": "^2.1.3",
