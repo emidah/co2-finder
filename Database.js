@@ -150,12 +150,18 @@ module.exports = class Database {
             }
         }
 
-        this.topCo2PerCapita = this.getTop(99, co2_data.map(x => {
+        this.topCo2PerCapita = this.getTop(null, co2_data.map(x => {
             const obj = {
                 "Country Name": x["Country Name"],
                 "Country Code": x["Country Code"],
             }
-            obj[max] = (parseFloat(x[max]) / parseFloat( this.pop_data.get(x["Country Code"])[max] ))
+            const co2 = parseFloat(x[max]);
+            const pop = parseFloat(this.pop_data.get(x["Country Code"])[max]);
+            if(co2 === 0 || isNaN(co2) || pop === 0 || isNaN(pop)){
+                obj[max] = 0;
+            } else {
+                obj[max] = co2/pop;
+            }
             obj["data"] = obj[max]
             obj["year"] = max
             //console.log(obj)
@@ -190,12 +196,12 @@ module.exports = class Database {
             if ((a[max] === "" && b[max] !== "" ) || parseFloat(a[max]) < parseFloat(b[max])){
                 return 1
             }
-            if ( (a[max] !== "" && b[max] === "" ) || parseFloat(a[max]) > parseFloat(b[max])) {
+            if ((a[max] !== "" && b[max] === "" ) || parseFloat(a[max]) > parseFloat(b[max])) {
                 return -1
             }
             return 0
         })
-        return data.slice(0,count)
+        return data.slice(0, count || data.length)
     }
 }
 
