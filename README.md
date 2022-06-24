@@ -2,7 +2,7 @@
 
 ## Live at http://co2.em1l.com
 
-A project developed based on the [Reaktor](https://www.reaktor.com/preliminary-assignment-for-summer-jobs-turku/) summer job assignment requirements, built using nodejs + react. The server can be found at this root directory, and the client lives at [/client](/client/).
+A project developed based on the Reaktor 2019 summer job assignment requirements, built using nodejs + react. The server can be found at this root directory, and the client lives at [/client](/client/).
 
 The site supports both mobile and desktop devices with different layouts.
 
