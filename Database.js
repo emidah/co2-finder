@@ -172,7 +172,10 @@ module.exports = class Database {
     getTop(count, data){
         let max = 2000;
         for(let i = 2100; i>1960; i--){
-            if((i in data[0]) && data[0][i] !== ''){
+            if(((i in data[0]) && data[0][i] !== '') 
+            || ((i in data[1]) && data[1][i] !== '') 
+            || ((i in data[2]) && data[2][i] !== '' || (i in data[2]) && data[2][i] !== '')
+            ){
                 max = i;
                 break;
             }
